@@ -31,8 +31,6 @@ _config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@
 app = Flask(__name__)
 app.config.from_object(_config)
 
-print(app.config)
-
 db = SQLAlchemy(app)
 
 searcher = Search(app)
