@@ -41,6 +41,7 @@ Esta siendo alojado en https://plabin.ddns.net/project_snitch
 ## Como ejecutar el projecto:
   - Crear base de datos
   - Agregar archivo credenciales.txt en "../project_snitch" (consultar ejemplo_crendenciales.txt)
+    
     Formato:
     - db_host
     - db_port
