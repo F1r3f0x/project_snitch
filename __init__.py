@@ -11,14 +11,30 @@ from flask_msearch import Search
 
 # Configs
 from project_snitch.config import Config
+_config = Config()
+
+# Lee credenciales desde archivo
+lineas = ''
+with open('../credenciales.txt') as _f:
+    lineas = _f.readlines()
+
+_config.DB_HOST = lineas[0].strip()
+_config.DB_PORT = lineas[1].strip()
+_config.DB_USER = lineas[2].strip()
+_config.DB_PASS = lineas[3].strip()
+_config.SECRET_KEY = lineas[4].strip()
+_config.RECAPTCHA_PUBLIC_KEY = lineas[5].strip()
+_config.RECAPTCHA_PRIVATE_KEY = lineas[6].strip()
+_config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@{_config.DB_HOST}:{_config.DB_PORT}/{_config.DB_NAME}'
 
 # Flask App
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(_config)
+
+print(app.config)
 
 db = SQLAlchemy(app)
 
-#whooshee = Whooshee(app)
 searcher = Search(app)
 
 # Configuracion de Login

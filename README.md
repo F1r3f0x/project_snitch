@@ -6,23 +6,23 @@ Project Snitch es desarrollado con Flask y SQLAlchemy.
 Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
 
 ## Mapa de Projecto
-+ ###forms:
++ ### forms:
     Formularios para la aplicación Web.
-+ ###models:
++ ### models:
     Modelos de SQLAlchemy.
-+ ###my_tools:
++ ### my_tools:
     Herramientas para extraccion de datos anexos y busqueda de texto.
-+ ###my_utils:
++ ### my_utils:
     Funciones de ayuda para la aplicación Web.
-+ ###Sistema:
++ ### Sistema:
     Programas para subir y mantener la informacion generada por los scrappers.
-+ ###static:
++ ### static:
     Elementos estaticos para la aplicación Web (CSS, JS y otros).
-+ ###templates:
++ ### templates:
     Templates de la aplicación.
     
-##Dependencias
- ####Python 3.6.3
+## Dependencias
+ #### Python 3.6.3
   - beautifulsoup4 (4.6.0)
   - lxml (4.1.1)
   - Flask (0.12.2)
@@ -38,9 +38,17 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
   - WTForms (2.1)
   - uWSGI (2.0.17)
   
-##Como ejecutar el projecto:
+## Como ejecutar el projecto:
   - Crear base de datos
-  - Cambiar credenciales en config.py
+  - Agregar archivo credenciales.txt en "../project_snitch"
+    Formato:
+    - db_host
+    - db_port
+    - db_user
+    - db_password
+    - secret_key
+    - recaptcha_publica
+    - recaptcha_privada
   - Cambiar claves de Recaptcha y Secret Key para Flask
   - Ejecutar wsgi.py
   
@@ -48,7 +56,7 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
 
 ## Estructura JSONs
 
-+ ###senadores.json
++ ### senadores.json
     - **tipo**: Tipo de Legislador
     - **primer_nombre**: Primer nombre. (str)
     - **segundo_nombre**: Segundo nombre. (str)
@@ -63,7 +71,7 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
     - **partido**: Nombre de Partido del Senador. (str)
     - **distritos**: Distritos del senador (int[])
 
-+ ###diputados.json
++ ### diputados.json
     - **tipo**: Tipo de Legislador
     - **primer_nombre**: Primer nombre. (str)
     - **segundo_nombre**: Segundo nombre. (str)
