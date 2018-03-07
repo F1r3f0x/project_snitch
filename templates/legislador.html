@@ -1,0 +1,127 @@
+{%extends 'layouts/base.html' %}
+{% from 'components/my_macros.html' import render_noticia %}
+
+{% block search_bar %}
+    {% include 'components/search_bar.html' %}
+{% endblock %}
+
+{% block page_content %}
+    <div id="informacionLegislador" class="card text-white bg-light mb-3">
+        <div class="card-header pt-4 bg-success">
+            <div class="row">
+                <div class="col-lg-10 col-md-10 col-sm-9 mr-lg-5 float-left">
+                    <h3>{{ legislador.primer_nombre }} {{ legislador.segundo_nombre }} {{ legislador.primer_apellido }} {{ legislador.segundo_apellido }}</h3>
+                </div>
+                <div class="col-lg-1 col-md-2 col-sm-2 float-right">
+                    {% if form %}
+                        <form action="" method="POST" role="form">
+                            {{ form.hidden_tag()  }}
+                            <div class="form-group">
+                                {{ form.sapear(class="btn btn-danger") }}
+                            </div>
+                        </form>
+                    {% elif not form and current_user.is_authenticated %}
+                        <span class="badge badge-danger" style="font-size: medium">Sapeando</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <p><b>Cargo Actual:</b> {{ cargo.tipo.nombre }}</p>
+            <p><b>Período Actual:</b> {{ cargo.periodo.nombre }} ({{ cargo.periodo.anno_inicio }} - {{ cargo.periodo.anno_fin }})</p>
+            <p><b>Partido Politico:</b> {{ cargo.partido.nombre }}</p>
+            <p><b>Región:</b> Región {{cargo.region.nombre}}, {{cargo.region.numero}}</p>
+            <p><b>Remuneracion:</b> ${{ cargo.remuneracion }}</p>
+            {% if senador %}
+                <p><b>Circunscripción:</b> {{cargo.circunscripcion.numero}}</p>
+                <p><b>Distritos:</b> {{distritos}}</p>
+            {% else %}
+                <p><b>Distrito:</b> {{distritos}}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-tabs border-primary">
+                <li class="nav-item active"><a class="nav-link active show" href="#cargos" data-toggle="tab" aria-expanded="false">Cargos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#votaciones" data-toggle="tab" aria-expanded="true">Votaciones</a></li>
+                <li class="nav-item"><a class="nav-link" href="#asistencia" data-toggle="tab" aria-expanded="false">Asistencia</a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade show active" id="cargos">
+                    <div id="tablaCargos" class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Años</th>
+                                <th>Tipo</th>
+                                <th>Partido Político</th>
+                                <th>Región</th>
+                                <th>Circunscripcion</th>
+                                <th>Distritos</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for c in lista_cargos %}
+                            <tr>
+                                <td>{{c.years}}</td>
+                                <td>{{c.tipo}}</td>
+                                <td>{{c.partido}}</td>
+                                <td>{{c.region}}</td>
+                                <td>{{c.circunscripcion}}</td>
+                                <td>{{c.distritos}}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="votaciones">
+                    <div id="tablaVotaciones" class="table-responsive">
+{#                        <table class="table table-hover">#}
+{#                            <thead>#}
+{#                            <tr>#}
+{#                                <th>Fecha</th>#}
+{#                                <th>Nombre del Proyecto</th>#}
+{#                                <th>Descripcion</th>#}
+{#                                <th>Voto</th>#}
+{#                                <th>Link</th>#}
+{#                            </tr>#}
+{#                            </thead>#}
+{#                            <tbody>#}
+{#                            </tr>#}
+{#                            </tbody>#}
+{#                        </table>#}
+                        WIP
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="asistencia">
+                    WIP
+                </div>
+            </div>
+        </div>
+
+        <div class="col mt-lg-0 mt-sm-4">
+              <div class="card">
+                <div class="card-header bg-info">
+                  Noticias
+                </div>
+                <div class="card-body p-2">
+                    {% if legislador.noticias %}
+                        <div class="card-body bg-transparent p-0 border-0">
+                            <ul class="list-group border-0">
+                                {% for noticia in legislador.noticias %}
+                                <li class="list-group-item p-0 mb-2 border-0">{{ render_noticia(noticia, False, 128) }}</li>
+                                {% endfor %}
+                            </ul>
+                    {% else %}
+                        <div class="card-body bg-transparent">
+                        <p>No hay noticias de este legislador.</p>
+                    {% endif %}
+                </div>
+                </div>
+              </div>
+        </div>
+    </div>
+{% endblock %}

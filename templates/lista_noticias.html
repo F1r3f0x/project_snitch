@@ -1,0 +1,23 @@
+{%extends 'layouts/base.html' %}
+{% from 'components/my_macros.html' import render_noticia %}
+
+{% block search_bar %}
+    {% include 'components/search_bar.html' %}
+{% endblock %}
+
+{% block page_content %}
+    <h2 class="p-3" >Pagina {{ pagina }}</h2>
+    <div class="jumbotron py-4">
+        <ul class="list-group">
+            {% for noticia in noticias %}
+            <li class="list-group-item mb-3 p-0 border-0">{{ render_noticia(noticia, True, 628) }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% if anterior %}
+        <a href="{{ anterior }}"><button type="button" class="btn btn-danger float-left"><< Pagina Anterior</button></a>
+    {% endif %}
+    {% if siguiente %}
+        <a href="{{ siguiente }}"><button type="button" class="btn btn-success float-right"> Siguiente Pagina >></button></a>
+    {% endif %}
+{% endblock %}

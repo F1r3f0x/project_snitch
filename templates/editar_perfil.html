@@ -1,0 +1,50 @@
+{% extends 'layouts/base.html' %}
+{% from 'components/_formhelpers.html' import render_field %}
+
+{% block search_bar %}
+    {% include 'components/search_bar.html' %}
+{% endblock %}
+
+{% block page_content %}
+    <div class="jumbotron py-4">
+
+        <h1 class="display-5">Editar mi perfil</h1>
+        <p class="lead">{{ usuario.nombre }} - {{ usuario.email }}</p>
+
+        <form action="" method="POST" role="form">
+
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ render_field(form.nombre, class="form-control")}}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.email, class="form-control")}}
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                {{ render_field(form.password, class="form-control")}}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.confirm, class="form-control")}}
+            </div>
+
+            {% if not debug%}
+                <hr>
+
+                <div class="form-group">
+                    {{ render_field(form.recaptcha, class="form-control")}}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success">Ok</button>
+            <a href="{{ url_for('mostrar_perfil') }}">
+                <button type="button" class="btn btn-danger">Cancelar</button>
+            </a>
+        </form>
+    </div>
+{% endblock %}
