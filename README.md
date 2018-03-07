@@ -3,7 +3,7 @@ Sistema que obtiene datos sobre los Senadores y Diputados de Chile y luego sinte
 
 Project Snitch es desarrollado con Flask y SQLAlchemy.
 
-Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
+Esta siendo alojado en https://plabin.ddns.net/project_snitch
 
 ## Mapa de Projecto
 + ### forms:
@@ -11,11 +11,11 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
 + ### models:
     Modelos de SQLAlchemy.
 + ### my_tools:
-    Herramientas para extraccion de datos anexos y busqueda de texto.
+    Herramientas para extraccion de datos anexos y busqueda de texto (deben ser reescritos para usar SQLAlchemy).
 + ### my_utils:
-    Funciones de ayuda para la aplicación Web.
+    Funciones de ayuda para la aplicación Web. (a reescribir)
 + ### Sistema:
-    Programas para subir y mantener la informacion generada por los scrappers.
+    Programas para subir y mantener la informacion generada por los scrappers. (deben ser reescritos para usar SQLAlchemy)
 + ### static:
     Elementos estaticos para la aplicación Web (CSS, JS y otros).
 + ### templates:
@@ -40,7 +40,7 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
   
 ## Como ejecutar el projecto:
   - Crear base de datos
-  - Agregar archivo credenciales.txt en "../project_snitch"
+  - Agregar archivo credenciales.txt en "../project_snitch" (consultar ejemplo_crendenciales.txt)
     Formato:
     - db_host
     - db_port
@@ -49,7 +49,6 @@ Hay un prototipo alojado en https://plabin.ddns.net/project_snitch
     - secret_key
     - recaptcha_publica
     - recaptcha_privada
-  - Cambiar claves de Recaptcha y Secret Key para Flask
   - Ejecutar wsgi.py
   
         python wsgi.py
