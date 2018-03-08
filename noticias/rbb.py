@@ -57,7 +57,7 @@ def agregar_noticias():
             elif '/noticias/deportes/' in link:
                 _noticia = scrapper.get_deporte(link)
             else:
-                _noticia = scrapper.get_noticia(link)
+                _noticia = scrapper.get_regular(link)
 
             if _noticia:
                 break

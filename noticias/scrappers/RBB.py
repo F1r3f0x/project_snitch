@@ -4,6 +4,7 @@
     GPLv3
 """
 import re
+import traceback
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
@@ -34,6 +35,27 @@ class ScrapperRBB(ScrapperNoticias):
                                             '#/p?n=0&o=desc&r=all&cat=all&cont=no']
         else:
             self.url_template_paginacion = url_template_paginacion
+
+    def get_noticia(self, url_pagina):
+        if 'reportajes' in url_pagina:
+            return self.get_reportaje(url_pagina)
+        elif '/noticias/deportes/' in url_pagina:
+            return self.get_deporte(url_pagina)
+        else:  # Revisar contenido de la noticia
+            page = requests.get(url_pagina)
+            soup = BeautifulSoup(page.content, 'lxml')
+
+            # Revisar Mujer
+            try:
+                href_mujer = soup.nav.ul.find_all('li')[1].a['href']
+                if '/lista/mujer/' in href_mujer:
+                    print('hola')
+                    return self.get_mujer(url_pagina)
+            except (AttributeError, IndexError) as err:
+                pass
+
+            # Obtener noticia normal
+            return self.get_regular(url_pagina)
 
     def get_reportaje(self, url_pagina):
         """
@@ -81,12 +103,12 @@ class ScrapperRBB(ScrapperNoticias):
             ##
 
         except Exception as exc:
-            logger.error(exc)
+            logger.error(traceback.format_exc())
             return None
 
         return reportaje
 
-    def get_noticia(self, url_pagina):
+    def get_regular(self, url_pagina):
         """
         Obtiene una noticia regular desde rbb.cl.
 
@@ -122,8 +144,8 @@ class ScrapperRBB(ScrapperNoticias):
 
             noticia['contenido'] = '\n'.join(contenido)
 
-        except Exception as exc:
-            logger.error(exc)
+        except Exception:
+            logger.error(traceback.format_exc())
             return None
 
         return noticia
@@ -165,7 +187,49 @@ class ScrapperRBB(ScrapperNoticias):
             noticia['contenido'] = '\n'.join(contenido)
 
         except Exception as exc:
-            logger.error(exc)
+            logger.error(traceback.format_exc())
+            return None
+
+        return noticia
+
+    def get_mujer(self, url_pagina):
+        """
+        Obtiene una noticia desde la seccion mujer de rbb.cl.
+
+        Args:
+            url_pagina (str): Url de Noticia a obtener.
+
+        Returns:
+            dict: Noticia:
+                    -  titulo (str): Titulo de la noticia.
+                    - contenido (str): Contenido de la noticia.
+                    - link (str): URL a la noticia.
+        """
+        try:
+            logger.info(f'Obteniendo noticia desde: {url_pagina}')
+
+            page = requests.get(url_pagina)
+
+            soup = BeautifulSoup(page.content, 'lxml')
+
+            noticia = {'link': url_pagina}
+
+            # Titulo Noticia
+            titulo = soup.find('h1', {'id': 'titulo_nota'}).text
+            titulo = str(titulo).strip()
+            noticia['titulo'] = titulo
+
+            # Contenido Nota
+            parrafos = soup.find('div',
+                                 {"class": "parrafo"}).find_all('p')
+            contenido = []
+            for parrafo in parrafos:
+                contenido.append(parrafo.text.strip())
+
+            noticia['contenido'] = '\n'.join(contenido)
+
+        except Exception:
+            logger.error(traceback.format_exc())
             return None
 
         return noticia
@@ -241,7 +305,7 @@ if __name__ == '__main__':
         if 'reportajes' in link_noticia['link']:
             noticias.append(s.get_reportaje(link))
         else:
-            noticias.append(s.get_noticia(link))
+            noticias.append(s.get_regular(link))
 
     for _n in noticias:
         print(_n)
