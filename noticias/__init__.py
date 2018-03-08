@@ -6,7 +6,7 @@ logger.setLevel(logging.DEBUG)
 
 msg_formatter = logging.Formatter("%(asctime)s: %(module)s.py || %(levelname)s - %(message)s")
 
-file_handler = logging.FileHandler('/var/log/plabin/project_snitch/spiders.log')  # Cambiar el directorio
+file_handler = logging.FileHandler('spiders.log')  # Cambiar el directorio
 file_handler.setFormatter(msg_formatter)
 stream_handler = logging.StreamHandler(sys.stdout)
 stream_handler.setFormatter(msg_formatter)
