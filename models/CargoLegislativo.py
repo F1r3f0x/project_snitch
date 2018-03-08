@@ -86,6 +86,7 @@ class CargoLegislativo(db.Model):
             periodo (Periodo): Período Legislativo del cargo.
             circunscripcion (Circunscripcion): Circunscripción en la que se asume el cargo.
             distritos (list[Distrito]): Lista de Distritos
+            id_interna (int): Id interna en sistema donde se extrajo.
         """
         super(CargoLegislativo, self).__init__(**kwargs)
 
@@ -96,6 +97,7 @@ class CargoLegislativo(db.Model):
         self.periodo = kwargs.get('periodo')
         self.circunscripcion = kwargs.get('circunscripcion')
         self.distritos = kwargs.get('distritos')
+        self.id_interna = kwargs.get('id_interna')
         self.remuneracion = remuneracion
 
     def add_distrito(self, distrito):
