@@ -4,23 +4,19 @@
     GPLv3
 """
 import json
-import pymysql.cursors
+from sqlalchemy import exc
 from sistema.scrappers.senadores import get_lista_senadores
 from sistema.scrappers.diputados import get_lista_diputados
 from project_snitch.my_tools.funciones import get_texto_buscable
-
-# DB Variables
-DB_HOST = 'example.net'
-DB_PORT = 3306
-DB_USER = 'user'  # Credenciales Aqui!!!
-DB_PASS = 'pass'  # Y Aqui
-DB_NAME = 'Snitch'
-DB_CHARSET = 'utf8mb4'
+from project_snitch import models, db
 
 # Variables
 ID_TIPO_SENADOR = 1
 ID_TIPO_DIPUTADO = 2
-ID_PERIODO = 9
+LEGISLATURA_ANTIGUA = False
+
+DIR_JSON_DIPUTADOS = 'datos/diputados.json'
+DIR_JSON_SENADORES = 'datos/senadores.json'
 
 
 # Traduccion de datos
@@ -102,13 +98,12 @@ def get_circun_id(numero_circuns, legislatura_antigua):
         return 0
 
 
-def ingresar_legisladores(conn, cur, list_legisladores, id_periodo):
+def ingresar_legisladores(db, list_legisladores, id_periodo):
     """
     Ingreso de primera vez de legisladores
 
     Args:
-        conn (Connection): Conexion a DB.
-        cur (Cursor): Cursor de conector a DB.
+        db (SQLAlchemy): ORM
         list_legisladores (list): Diccionario con datos de los legisladores (obtenidos con su scrapper)
         id_periodo (int): El periodo legislativo de los legisladores.
 
@@ -118,79 +113,57 @@ def ingresar_legisladores(conn, cur, list_legisladores, id_periodo):
     """
 
     if list_legisladores:
-        # Ingresar Legislador
-        query = 'INSERT INTO legislador (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email, telefono, texto_buscable, activo) VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE )'
-        cnt_id = 0
         for legislador in list_legisladores:
-            print(f'Legislador: {legislador["primer_nombre"]} {legislador["primer_apellido"]}')
+            # Legislador
+            _legislador = models.Legislador(
+                legislador['primer_nombre'],
+                '',
+                legislador['primer_apellido'],
+                '',
+                None,
+                legislador['email'],
+                legislador['telefono'],
+                '',
+                True,
+                estado_noticioso_id=1,
+            )
+            segundo_nombre = legislador['segundo_nombre']
+            if segundo_nombre:
+                _legislador.segundo_nombre = segundo_nombre
+            segundo_apellido = legislador['segundo_apellido']
+            if segundo_apellido:
+                _legislador.segundo_apellido = segundo_apellido
+            #
 
-            texto_no_buscable = f"{legislador['primer_nombre']} {legislador['segundo_nombre']} {legislador['primer_apellido']} {legislador['segundo_apellido']}"
-            texto_buscable = get_texto_buscable(texto_no_buscable)
+            # Cargo
+            _cargo = models.CargoLegislativo(0)
+            _cargo.tipo_legislador_id = legislador['tipo']
+            _cargo.region_id = legislador['region']
+            _cargo.periodo_id = id_periodo
+            _cargo.partido_politico_id = legislador['partido']
+            _cargo.id_interna = legislador['id_interna']
+            _cargo.circunscripcion = legislador.get('circunscripcion')
 
-            cur.execute(query,
-                           (legislador['primer_nombre'],
-                            legislador['segundo_nombre'],
-                            legislador['primer_apellido'],
-                            legislador['segundo_apellido'],
-                            legislador['email'],
-                            legislador['telefono'],
-                            texto_buscable)
-                           )
-
-            cnt_id += 1
-            legislador['id'] = cnt_id
-
-        conn.commit()
-
-        # Ingresar cargo
-        cargo_id = 0
-        for legislador in list_legisladores:
-            if legislador['tipo'] == ID_TIPO_SENADOR:
-                query = f'INSERT INTO snitch.cargo_legislativo (legislador_id, remuneracion, tipo_legislador_id, partido_politico_id, periodo_id, region_id, circunscripcion_id, id_interna, activo) VALUES (%s, 0, %s, %s, {id_periodo}, %s, %s, %s, TRUE)'
+            distritos = legislador.get('distritos')
+            if distritos:
+                _cargo.distritos = legislador['distritos']
             else:
-                query = f'INSERT INTO snitch.cargo_legislativo (legislador_id, remuneracion, tipo_legislador_id, partido_politico_id, periodo_id, region_id, id_interna, activo) VALUES (%s, 0, %s, %s, {id_periodo}, %s, %s, TRUE)'
+                _cargo.distritos = [legislador['distrito']]
+            #
 
-            print(f'Cargo Legislativo: [{legislador["tipo"]}] {legislador["primer_nombre"]} {legislador["primer_apellido"]} id: {legislador["id"]}')
-            if legislador['tipo'] == ID_TIPO_SENADOR:
-                cur.execute(query,
-                               (legislador['id'],
-                                legislador['tipo'],
-                                legislador['partido'],
-                                legislador['region'],
-                                legislador['circunscripcion'],
-                                legislador['id_interna'])
-                               )
-            else:
-                cur.execute(query,
-                            (legislador['id'],
-                             legislador['tipo'],
-                             legislador['partido'],
-                             legislador['region'],
-                             legislador['id_interna'])
-                            )
-            cargo_id +=1
-            legislador['cargo_id'] = cargo_id
-        conn.commit()
+            _legislador.ultimo_tipo_legislador_id = legislador['tipo']
+            _legislador.cargos = [_cargo]
 
-        # Ingresar distritos
-        query = 'INSERT INTO snitch.distrito_cargo_legislativo VALUES (%s, %s)'
-        for legislador in list_legisladores:
-            print(f'Distritos: {legislador["primer_nombre"]} {legislador["primer_apellido"]}')
-            if legislador['tipo'] == ID_TIPO_SENADOR:
-                for distrito in legislador['distritos']:
-                    cur.execute(query,
-                                (distrito,
-                                 legislador['cargo_id']))
-            else:
-                cur.execute(query,
-                            (legislador['distrito'], legislador['cargo_id']))
-        conn.commit()
+            db.session.add(_legislador)
+
+        db.session.commit()
         return True
+
     else:
         return False
 
-
-def get_actualizar_senadores(conn, cur, dict_senadores_actualizar, dict_senadores_nuevos=None):
+# TODO
+def get_actualizar_senadores(db, dict_senadores_actualizar, dict_senadores_nuevos=None):
     """
     Actualizacion e Ingreso de nuevos senadores
     :param conn:
@@ -209,46 +182,31 @@ def get_actualizar_senadores(conn, cur, dict_senadores_actualizar, dict_senadore
 
 if __name__ == '__main__':
 
-    conn = None
+    # Obtener periodos
+    periodos = None
     try:
-        conn = pymysql.connect(host=DB_HOST,
-                               port=DB_PORT,
-                               user=DB_USER,
-                               db=DB_NAME,
-                               password=DB_PASS,
-                               charset=DB_CHARSET,
-                               cursorclass=pymysql.cursors.DictCursor)
-    except Exception as err:
+        periodos = models.Periodo.query.all()
+    except exc.OperationalError as err:
         print(f'Error al conectar a la DB: {err}')
         quit()
+
+    # Obtener ids de periodos
+    ids_periodos = [p.id for p in periodos]
 
     print("\nMantenedor Project Snitch\n")
 
     # Variables de Control
     periodo_id = 0  # Periodo de los legisladores
-    legislatura_antigua = False  # Legislatura de los legisladores (por el cambio de distritos)
-    lista_legisladores = []
 
-    dir_archivo_diputados = '../datos/diputados.json'
-    dir_archivo_senadores = '../datos/senadores.json'
+    lista_legisladores = []
 
     lista_senadores = []
     lista_diputados = []
 
-    # Obtener Periodos
-    periodos = []
-    query = 'SELECT * FROM snitch.periodo ORDER BY id'
-    with conn.cursor() as _cursor:
-        _cursor.execute(query)
-        periodos = _cursor.fetchall()
-
-    # Obtener ids de periodos
-    ids_periodos = [p['id'] for p in periodos]
-
     # Imprimir lista de periodos
     print('Seleccione Periodo Legislativo de Legisladores: \n')
     for p in periodos:
-        print(f'{p["id"]}._ {p["nombre"]} ({p["año_inicio"]}-{p["año_fin"]})')
+        print(f'{p.id}._ {p} ')
 
     # Seleccionar un periodo para el ingreso
     obteniendo = True
@@ -264,19 +222,19 @@ if __name__ == '__main__':
             print('El periodo no existe, intente de nuevo.')
 
     if periodo_id <= 9:
-        legislatura_antigua = True
+        LEGISLATURA_ANTIGUA = True
 
-    print(f'Legislatura Antigua = {legislatura_antigua}')
+    print(f'Legislatura Antigua = {LEGISLATURA_ANTIGUA}')
 
     # Desde archivo o web
     while True:
-        fuente = str(input('Desde (A)rchivos o (W)eb?')).lower().strip()
+        fuente = str(input('Desde (A)rchivos o (W)eb? ')).lower().strip()
 
         if fuente == 'a':
             print('Cargando desde archivo')
-            with open(dir_archivo_diputados, 'r', encoding='utf8') as _file:
+            with open(DIR_JSON_DIPUTADOS, 'r', encoding='utf8') as _file:
                 lista_diputados = json.load(_file)
-            with open(dir_archivo_senadores, 'r', encoding='utf8') as _file:
+            with open(DIR_JSON_SENADORES, 'r', encoding='utf8') as _file:
                 lista_senadores = json.load(_file)
             print('Cargados')
             break
@@ -300,18 +258,43 @@ if __name__ == '__main__':
         region = legislador['region']
         partido = legislador['partido']
         if legislador['tipo'] == 'Senador':
-            legislador['tipo'] = 1
+            legislador['tipo'] = ID_TIPO_SENADOR
             legislador['region'] = TRADUCCION_REGIONES_SENADORES.get(region)
             legislador['partido'] = TRADUCCION_PARTIDOS_SENADORES.get(partido)
+
+            # Distritos a modelo
+            distritos_modelos = []
+            for str_distrito in legislador['distritos']:
+                num_distrito = int(str_distrito)
+                distrito = models.Distrito.query.\
+                    filter_by(numero=num_distrito,
+                              antiguo=LEGISLATURA_ANTIGUA).\
+                    first()
+                distritos_modelos.append(distrito)
+            legislador['distritos'] = distritos_modelos
+
+            # Circunscripcion a modelo
+            num_circun = int(legislador['circunscripcion'])
+            legislador['circunscripcion'] = models.Circunscripcion.query.\
+                filter_by(numero=num_circun,
+                          antiguo=LEGISLATURA_ANTIGUA).\
+                first()
         else:
-            legislador['tipo'] = 2
+            legislador['tipo'] = ID_TIPO_DIPUTADO
             legislador['region'] = TRADUCCION_REGIONES_DIPUTADOS.get(region)
             legislador['partido'] = TRADUCCION_PARTIDOS_DIPUTADOS.get(partido)
 
+            # Distrito a modelo
+            num_distrito = int(legislador['distrito'])
+            legislador['distrito'] = models.Distrito.query.\
+                filter_by(numero=num_distrito,
+                          antiguo=LEGISLATURA_ANTIGUA).\
+                first()
+
     # Ingresar legisladores al sistema
-    with conn.cursor() as cursor:
-        resultado = ingresar_legisladores(conn, cursor, lista_legisladores, periodo_id)
-        print(resultado)
+    resultado = ingresar_legisladores(db, lista_legisladores, periodo_id)
+    if resultado:
+        print('ok!')
 
 else:
     print('THIS IS NOT A MODULE')

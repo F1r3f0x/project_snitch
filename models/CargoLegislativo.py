@@ -86,17 +86,30 @@ class CargoLegislativo(db.Model):
             periodo (Periodo): Período Legislativo del cargo.
             circunscripcion (Circunscripcion): Circunscripción en la que se asume el cargo.
             distritos (list[Distrito]): Lista de Distritos
+            id_interna (int): Id interna en sistema donde se extrajo.
         """
         super(CargoLegislativo, self).__init__(**kwargs)
 
-        self.legislador = kwargs.get('legislador')
-        self.tipo = kwargs.get('tipo')
-        self.region = kwargs.get('region')
-        self.partido = kwargs.get('partido')
-        self.periodo = kwargs.get('periodo')
-        self.circunscripcion = kwargs.get('circunscripcion')
-        self.distritos = kwargs.get('distritos')
+        if kwargs.get('legislador'):
+            self.legislador = kwargs.get('legislador')
+        if kwargs.get('tipo'):
+            self.tipo = kwargs.get('tipo')
+        if kwargs.get('region'):
+            self.region = kwargs.get('region')
+        if kwargs.get('partido'):
+            self.partido = kwargs.get('partido')
+        if kwargs.get('periodo'):
+            self.periodo = kwargs.get('periodo')
+        if kwargs.get('circunscripcion'):
+            self.circunscripcion = kwargs.get('circunscripcion')
+        if kwargs.get('id_interna'):
+            self.id_interna = kwargs.get('id_interna')
+
         self.remuneracion = remuneracion
+
+        distritos = kwargs.get('distritos')
+        if distritos:
+            self.distritos = kwargs.get('distritos')
 
     def add_distrito(self, distrito):
         """
