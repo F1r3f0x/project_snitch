@@ -6,9 +6,9 @@ class Config(object):
     # DB Variables
     DB_HOST = 'example.net'
     DB_PORT = 3306
-    DB_USER = 'user'  # Credenciales Aqui!!!
-    DB_PASS = 'pass'  # Y Aqui
-    DB_NAME = 'snitch'
+    DB_USER = 'user'
+    DB_PASS = 'pass'
+    DB_NAME = 'db_name'
 
     DEBUG = True
 
