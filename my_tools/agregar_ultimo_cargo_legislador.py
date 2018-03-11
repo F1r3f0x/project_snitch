@@ -14,8 +14,8 @@ def agregar_ultimo_cargo():
     legisladores = Legislador.query.all()
 
     for legislador in legisladores:
-        ultimo_cargo = CargoLegislativo.query.filter_by(legislador_id=legislador.id).order_by(CargoLegislativo.fecha_ingreso.desc())[0]
-        legislador.ultimo_tipo_legislador_id = ultimo_cargo.id
+        ultimo_cargo = CargoLegislativo.query.filter_by(legislador_id=legislador.id).order_by(CargoLegislativo.fecha_ingreso.desc()).all()[0]
+        legislador.ultimo_tipo_legislador_id = ultimo_cargo.tipo.id
 
     db.session.commit()
 
