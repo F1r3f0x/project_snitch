@@ -90,15 +90,26 @@ class CargoLegislativo(db.Model):
         """
         super(CargoLegislativo, self).__init__(**kwargs)
 
-        self.legislador = kwargs.get('legislador')
-        self.tipo = kwargs.get('tipo')
-        self.region = kwargs.get('region')
-        self.partido = kwargs.get('partido')
-        self.periodo = kwargs.get('periodo')
-        self.circunscripcion = kwargs.get('circunscripcion')
-        self.distritos = kwargs.get('distritos')
-        self.id_interna = kwargs.get('id_interna')
+        if kwargs.get('legislador'):
+            self.legislador = kwargs.get('legislador')
+        if kwargs.get('tipo'):
+            self.tipo = kwargs.get('tipo')
+        if kwargs.get('region'):
+            self.region = kwargs.get('region')
+        if kwargs.get('partido'):
+            self.partido = kwargs.get('partido')
+        if kwargs.get('periodo'):
+            self.periodo = kwargs.get('periodo')
+        if kwargs.get('circunscripcion'):
+            self.circunscripcion = kwargs.get('circunscripcion')
+        if kwargs.get('id_interna'):
+            self.id_interna = kwargs.get('id_interna')
+
         self.remuneracion = remuneracion
+
+        distritos = kwargs.get('distritos')
+        if distritos:
+            self.distritos = kwargs.get('distritos')
 
     def add_distrito(self, distrito):
         """

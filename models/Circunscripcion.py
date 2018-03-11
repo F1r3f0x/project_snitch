@@ -48,7 +48,10 @@ class Circunscripcion(db.Model):
         self.id = id
         self.numero = numero
         self.antiguo = antiguo
-        self.distritos = kwargs.get('distritos')
+
+        distritos = kwargs.get('distritos')
+        if distritos:
+            self.distritos = kwargs.get('distritos')
 
     def __str__(self):
         if self.antiguo:
