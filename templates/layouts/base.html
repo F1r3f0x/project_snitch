@@ -16,7 +16,7 @@
     {% endif %}
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url_for('static',filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
     <script src="{{ url_for('static', filename='js/fontawesome-all.js') }}"></script>
 
 </head>
@@ -123,7 +123,7 @@
     <script>
         window.jQuery
     </script>
-    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     {% block page_script %}
     {% endblock %}
