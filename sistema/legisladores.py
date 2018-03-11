@@ -13,7 +13,10 @@ from project_snitch import models, db
 # Variables
 ID_TIPO_SENADOR = 1
 ID_TIPO_DIPUTADO = 2
-ID_PERIODO = 9
+LEGISLATURA_ANTIGUA = False
+
+DIR_JSON_DIPUTADOS = 'datos/diputados.json'
+DIR_JSON_SENADORES = 'datos/senadores.json'
 
 
 # Traduccion de datos
@@ -110,72 +113,52 @@ def ingresar_legisladores(db, list_legisladores, id_periodo):
     """
 
     if list_legisladores:
-        # Ingresar Legislador
-        query = 'INSERT INTO legislador (primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, email, telefono, texto_buscable, activo) VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE )'
-        cnt_id = 0
         for legislador in list_legisladores:
-            print(f'Legislador: {legislador["primer_nombre"]} {legislador["primer_apellido"]}')
-
+            # Legislador
             _legislador = models.Legislador(
                 legislador['primer_nombre'],
-                legislador['segundo_nombre'],
+                '',
                 legislador['primer_apellido'],
-                legislador['segundo_apellido'],
-                email=legislador['email'],
-                telefono=legislador['telefono']
+                '',
+                None,
+                legislador['email'],
+                legislador['telefono'],
+                '',
+                True,
+                estado_noticioso_id=1,
             )
+            segundo_nombre = legislador['segundo_nombre']
+            if segundo_nombre:
+                _legislador.segundo_nombre = segundo_nombre
+            segundo_apellido = legislador['segundo_apellido']
+            if segundo_apellido:
+                _legislador.segundo_apellido = segundo_apellido
+            #
 
-            db.session.add(legislador)
+            # Cargo
+            _cargo = models.CargoLegislativo(0)
+            _cargo.tipo_legislador_id = legislador['tipo']
+            _cargo.region_id = legislador['region']
+            _cargo.periodo_id = id_periodo
+            _cargo.partido_politico_id = legislador['partido']
+            _cargo.id_interna = legislador['id_interna']
+            _cargo.circunscripcion = legislador.get('circunscripcion')
 
-            cnt_id += 1
-            legislador['id'] = cnt_id
-
-        db.session.commit()
-
-        # Ingresar cargo
-        cargo_id = 0
-        for legislador in list_legisladores:
-            print(f'Cargo Legislativo: [{legislador["tipo"]}] {legislador["primer_nombre"]} {legislador["primer_apellido"]} id: {legislador["id"]}')
-
-            _legislador = None
-            if legislador['tipo'] == ID_TIPO_SENADOR:
-                _legislador = models.CargoLegislativo(
-                    legislador=legislador['id'],
-                    tipo=ID_TIPO_SENADOR,
-                    region=legislador[region],
-                    circunscripcion=legislador['circunscripcion'],
-                    id_interna=legislador['id_interna']
-                )
+            distritos = legislador.get('distritos')
+            if distritos:
+                _cargo.distritos = legislador['distritos']
             else:
-                _legislador = models.CargoLegislativo(
-                    legislador=legislador['id'],
-                    tipo=ID_TIPO_DIPUTADO,
-                    region=legislador[region],
-                    id_interna=legislador['id_interna']
-                )
+                _cargo.distritos = [legislador['distrito']]
+            #
+
+            _legislador.ultimo_tipo_legislador_id = legislador['tipo']
+            _legislador.cargos = [_cargo]
 
             db.session.add(_legislador)
 
-            cargo_id += 1
-            legislador['cargo_id'] = cargo_id
-
         db.session.commit()
-
-
-        # Ingresar distritos
-        query = 'INSERT INTO snitch.distrito_cargo_legislativo VALUES (%s, %s)'
-        for legislador in list_legisladores:
-            print(f'Distritos: {legislador["primer_nombre"]} {legislador["primer_apellido"]}')
-            if legislador['tipo'] == ID_TIPO_SENADOR:
-                for distrito in legislador['distritos']:
-                    cur.execute(query,
-                                (distrito,
-                                 legislador['cargo_id']))
-            else:
-                cur.execute(query,
-                            (legislador['distrito'], legislador['cargo_id']))
-        conn.commit()
         return True
+
     else:
         return False
 
@@ -214,11 +197,8 @@ if __name__ == '__main__':
 
     # Variables de Control
     periodo_id = 0  # Periodo de los legisladores
-    legislatura_antigua = False  # Legislatura de los legisladores (por el cambio de distritos)
-    lista_legisladores = []
 
-    dir_archivo_diputados = '../datos/diputados.json'
-    dir_archivo_senadores = '../datos/senadores.json'
+    lista_legisladores = []
 
     lista_senadores = []
     lista_diputados = []
@@ -242,19 +222,19 @@ if __name__ == '__main__':
             print('El periodo no existe, intente de nuevo.')
 
     if periodo_id <= 9:
-        legislatura_antigua = True
+        LEGISLATURA_ANTIGUA = True
 
-    print(f'Legislatura Antigua = {legislatura_antigua}')
+    print(f'Legislatura Antigua = {LEGISLATURA_ANTIGUA}')
 
     # Desde archivo o web
     while True:
-        fuente = str(input('Desde (A)rchivos o (W)eb?')).lower().strip()
+        fuente = str(input('Desde (A)rchivos o (W)eb? ')).lower().strip()
 
         if fuente == 'a':
             print('Cargando desde archivo')
-            with open(dir_archivo_diputados, 'r', encoding='utf8') as _file:
+            with open(DIR_JSON_DIPUTADOS, 'r', encoding='utf8') as _file:
                 lista_diputados = json.load(_file)
-            with open(dir_archivo_senadores, 'r', encoding='utf8') as _file:
+            with open(DIR_JSON_SENADORES, 'r', encoding='utf8') as _file:
                 lista_senadores = json.load(_file)
             print('Cargados')
             break
@@ -278,17 +258,43 @@ if __name__ == '__main__':
         region = legislador['region']
         partido = legislador['partido']
         if legislador['tipo'] == 'Senador':
-            legislador['tipo'] = 1
+            legislador['tipo'] = ID_TIPO_SENADOR
             legislador['region'] = TRADUCCION_REGIONES_SENADORES.get(region)
             legislador['partido'] = TRADUCCION_PARTIDOS_SENADORES.get(partido)
+
+            # Distritos a modelo
+            distritos_modelos = []
+            for str_distrito in legislador['distritos']:
+                num_distrito = int(str_distrito)
+                distrito = models.Distrito.query.\
+                    filter_by(numero=num_distrito,
+                              antiguo=LEGISLATURA_ANTIGUA).\
+                    first()
+                distritos_modelos.append(distrito)
+            legislador['distritos'] = distritos_modelos
+
+            # Circunscripcion a modelo
+            num_circun = int(legislador['circunscripcion'])
+            legislador['circunscripcion'] = models.Circunscripcion.query.\
+                filter_by(numero=num_circun,
+                          antiguo=LEGISLATURA_ANTIGUA).\
+                first()
         else:
-            legislador['tipo'] = 2
+            legislador['tipo'] = ID_TIPO_DIPUTADO
             legislador['region'] = TRADUCCION_REGIONES_DIPUTADOS.get(region)
             legislador['partido'] = TRADUCCION_PARTIDOS_DIPUTADOS.get(partido)
 
+            # Distrito a modelo
+            num_distrito = int(legislador['distrito'])
+            legislador['distrito'] = models.Distrito.query.\
+                filter_by(numero=num_distrito,
+                          antiguo=LEGISLATURA_ANTIGUA).\
+                first()
+
     # Ingresar legisladores al sistema
     resultado = ingresar_legisladores(db, lista_legisladores, periodo_id)
-    print(resultado)
+    if resultado:
+        print('ok!')
 
 else:
     print('THIS IS NOT A MODULE')
