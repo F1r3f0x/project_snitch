@@ -20,7 +20,7 @@ with open('../credenciales.txt') as _f:
 
 _config.DB_HOST = lineas[0].strip()
 _config.DB_PORT = lineas[1].strip()
-_config.DB_NAME = lineas[2]
+_config.DB_NAME = lineas[2].strip()
 _config.DB_USER = lineas[3].strip()
 _config.DB_PASS = lineas[4].strip()
 _config.SECRET_KEY = lineas[5].strip()
