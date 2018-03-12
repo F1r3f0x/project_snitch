@@ -7,7 +7,6 @@ import json
 from sqlalchemy import exc
 from sistema.scrappers.senadores import get_lista_senadores
 from sistema.scrappers.diputados import get_lista_diputados
-from project_snitch.my_tools.funciones import get_texto_buscable
 from project_snitch import models, db
 
 # Variables
@@ -111,57 +110,61 @@ def ingresar_legisladores(db, list_legisladores, id_periodo):
         bool: Resultado de la operacion.
 
     """
+    legisladores_agregar = []
 
-    if list_legisladores:
-        for legislador in list_legisladores:
-            # Legislador
-            _legislador = models.Legislador(
-                legislador['primer_nombre'],
-                '',
-                legislador['primer_apellido'],
-                '',
-                None,
-                legislador['email'],
-                legislador['telefono'],
-                '',
-                True,
-                estado_noticioso_id=1,
-            )
-            segundo_nombre = legislador['segundo_nombre']
-            if segundo_nombre:
-                _legislador.segundo_nombre = segundo_nombre
-            segundo_apellido = legislador['segundo_apellido']
-            if segundo_apellido:
-                _legislador.segundo_apellido = segundo_apellido
-            #
+    for legislador in list_legisladores:
+        # Legislador
+        _legislador = models.Legislador(
+            legislador['primer_nombre'],
+            '',
+            legislador['primer_apellido'],
+            '',
+            None,
+            legislador['email'],
+            legislador['telefono'],
+            '',
+            True,
+            estado_noticioso_id=1,
+        )
+        segundo_nombre = legislador['segundo_nombre']
+        if segundo_nombre:
+            _legislador.segundo_nombre = segundo_nombre
+        segundo_apellido = legislador['segundo_apellido']
+        if segundo_apellido:
+            _legislador.segundo_apellido = segundo_apellido
+        #
 
-            # Cargo
-            _cargo = models.CargoLegislativo(0)
-            _cargo.tipo_legislador_id = legislador['tipo']
-            _cargo.region_id = legislador['region']
-            _cargo.periodo_id = id_periodo
-            _cargo.partido_politico_id = legislador['partido']
-            _cargo.id_interna = legislador['id_interna']
-            _cargo.circunscripcion = legislador.get('circunscripcion')
+        # Cargo
+        _cargo = models.CargoLegislativo(0)
+        _cargo.tipo_legislador_id = legislador['tipo']
+        _cargo.region_id = legislador['region']
+        _cargo.periodo_id = id_periodo
+        _cargo.partido_politico_id = legislador['partido']
+        _cargo.id_interna = legislador['id_interna']
+        _cargo.circunscripcion = legislador.get('circunscripcion')
 
-            distritos = legislador.get('distritos')
-            if distritos:
-                _cargo.distritos = legislador['distritos']
-            else:
-                _cargo.distritos = [legislador['distrito']]
-            #
+        distritos = legislador.get('distritos')
+        if distritos:
+            _cargo.distritos = legislador['distritos']
+        else:
+            _cargo.distritos = [legislador['distrito']]
+        #
 
-            _legislador.ultimo_tipo_legislador_id = legislador['tipo']
-            _legislador.cargos = [_cargo]
+        _legislador.ultimo_tipo_legislador_id = legislador['tipo']
+        _legislador.cargos = [_cargo]
 
-            db.session.add(_legislador)
+        db.session.add(_legislador)
+        legisladores_agregar.append(_legislador)
 
+    print(f'Numero Legisladores a agregar = {len(legisladores_agregar)}')
+    print('Legisladores:')
+    for l in legisladores_agregar:
+        print(l)
+    if input('Agregar? (y) / (n) ').lower().strip() == 'y':
         db.session.commit()
         return True
-
     else:
         return False
-
 # TODO
 def get_actualizar_senadores(db, dict_senadores_actualizar, dict_senadores_nuevos=None):
     """
@@ -240,11 +243,23 @@ if __name__ == '__main__':
             break
 
         if fuente == 'w':
+            guardar = False
+            if input('Guardar JSON legisladores? y / n ').lower().strip() == 'y':
+                guardar = True
+
             print('Obteniendo Legisladores')
             print('Diputados:')
             lista_diputados = get_lista_diputados()
             print('Senadores:')
             lista_senadores = get_lista_senadores()
+
+            if guardar:
+                print('Escribiendo a JSON')
+                with open('senadores.json', 'w') as f:
+                    json.dump(lista_senadores, f)
+                with open('diputados.json', 'w') as f:
+                    json.dump(lista_diputados, f)
+                print('guardado Ok!')
             break
 
     print('Creando Lista Maestra')
@@ -295,6 +310,8 @@ if __name__ == '__main__':
     resultado = ingresar_legisladores(db, lista_legisladores, periodo_id)
     if resultado:
         print('ok!')
+    else:
+        print('no se agregraron legisladores.')
 
 else:
     print('THIS IS NOT A MODULE')
