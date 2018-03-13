@@ -40,13 +40,15 @@ TRADUCCION_REGIONES_SENADORES = {
 }
 
 TRADUCCION_PARTIDOS_SENADORES = {
-    'U.D.I.':           1,
-    'R.N.':             2,
-    'P.S.':             3,
-    'P.D.C.':           4,
-    'P.P.D.':           5,
-    'PAÍS':             10,
-    'Amplitud':         20,
+    'U.D.I.':                       1,
+    'R.N.':                         2,
+    'P.S.':                         3,
+    'P.D.C.':                       4,
+    'P.P.D.':                       5,
+    'Evopoli':                      6,
+    'Revolución Democrática':       7,
+    'PAÍS':                         10,
+    'Amplitud':                     20,
     'Independiente':    9999
 }
 # Diputados
