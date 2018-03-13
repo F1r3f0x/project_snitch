@@ -71,7 +71,7 @@ if __name__ == '__main__':
     fecha_nombre = f'{fecha.year}-{fecha.month}-{fecha.day}'
     nombre_json = f'senadores-{fecha_nombre}.json'
 
-    with open(f'../../datos/{nombre_json}', 'w') as f:
+    with open(f'../../datos/{nombre_json}', 'w', encoding='utf8') as f:
         json.dump(lista, f)
 
     print(f'Guardado en {nombre_json}')
