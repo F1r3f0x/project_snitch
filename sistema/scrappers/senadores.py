@@ -20,6 +20,7 @@ def get_lista_senadores():
     """
     lista_senadores = []
     try:
+        print('Obtienendo senadores desde URL')
         page = requests_get(URL_LISTADO_SENADORES_VIGENTES)
     except (ConnectionError, ConnectionRefusedError,
             requests_exceptions.MissingSchema) as err:

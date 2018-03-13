@@ -4,9 +4,10 @@
     GPLv3
 """
 import json
+from datetime import datetime
 from sqlalchemy import exc
-from sistema.scrappers.senadores import get_lista_senadores
-from sistema.scrappers.diputados import get_lista_diputados
+from project_snitch.sistema.scrappers.senadores import get_lista_senadores
+from project_snitch.sistema.scrappers.diputados import get_lista_diputados
 from project_snitch import models, db
 
 # Variables
@@ -87,20 +88,6 @@ TRADUCCION_PARTIDOS_DIPUTADOS = {
 }
 
 
-# TODO: get_distrito_id
-def get_distrito_id(numero_distrito):
-    pass
-
-
-# TODO: get_circun_id
-def get_circun_id(numero_circuns, legislatura_antigua):
-    if legislatura_antigua:
-        return int(numero_circuns)
-    else:
-        # TODO
-        return 0
-
-
 def ingresar_legisladores(db, list_legisladores, id_periodo):
     """
     Ingreso de primera vez de legisladores
@@ -169,26 +156,17 @@ def ingresar_legisladores(db, list_legisladores, id_periodo):
         return True
     else:
         return False
+
+
 # TODO
-def get_actualizar_senadores(db, dict_senadores_actualizar, dict_senadores_nuevos=None):
+def actualizar_ingresar_senadores(db, lista_legisladores, id_periodo):
     """
     Actualizacion e Ingreso de nuevos senadores
-    :param conn:
-    :type conn:
-    :param cur:
-    :type cur:
-    :param dict_senadores_actualizar:
-    :type dict_senadores_actualizar:
-    :param dict_senadores_nuevos:
-    :type dict_senadores_nuevos:
-    :return:
-    :rtype:
     """
-    pass
+    return True
 
 
 if __name__ == '__main__':
-
     # Obtener periodos
     periodos = None
     try:
@@ -196,14 +174,31 @@ if __name__ == '__main__':
     except exc.OperationalError as err:
         print(f'Error al conectar a la DB: {err}')
         quit()
+    #
 
     # Obtener ids de periodos
     ids_periodos = [p.id for p in periodos]
 
-    print("\nMantenedor Project Snitch\n")
+    print("\nMantenedor - Project Snitch\n")
 
     # Variables de Control
     periodo_id = 0  # Periodo de los legisladores
+
+    # Input accion a realizar
+    acciones = {
+        1: 'Actualizar e Ingresar legisladores',
+        9999: 'Ingresar Legisladores por primera vez',
+        'S': 'Salir'
+    }
+
+    for _k, _accion in acciones.items():
+        print(f'[{_k}] {_accion}')
+
+    accion = input('\nSeleccione accion a realizar: ').lower().strip()
+    if accion == 's':
+        print('Saliendo!')
+        quit()
+    #
 
     lista_legisladores = []
 
@@ -214,6 +209,7 @@ if __name__ == '__main__':
     print('Seleccione Periodo Legislativo de Legisladores: \n')
     for p in periodos:
         print(f'{p.id}._ {p} ')
+    #
 
     # Seleccionar un periodo para el ingreso
     obteniendo = True
@@ -230,8 +226,8 @@ if __name__ == '__main__':
 
     if periodo_id <= 9:
         LEGISLATURA_ANTIGUA = True
-
     print(f'Legislatura Antigua = {LEGISLATURA_ANTIGUA}')
+    #
 
     # Desde archivo o web
     while True:
@@ -251,20 +247,26 @@ if __name__ == '__main__':
             if input('Guardar JSON legisladores? y / n ').lower().strip() == 'y':
                 guardar = True
 
-            print('Obteniendo Legisladores')
+            print('\nObteniendo Legisladores\n')
             print('Diputados:')
             lista_diputados = get_lista_diputados()
+            print()
             print('Senadores:')
             lista_senadores = get_lista_senadores()
+            print()
+
+            fecha = datetime.now()
+            fecha_nombre = f'{fecha.year}-{fecha.month}-{fecha.day}'
 
             if guardar:
                 print('Escribiendo a JSON')
-                with open('senadores.json', 'w') as f:
+                with open(f'senadores_{fecha_nombre}.json', 'w', encoding='utf8') as f:
                     json.dump(lista_senadores, f)
-                with open('diputados.json', 'w') as f:
+                with open(f'diputados_{fecha_nombre}.json', 'w', encoding='utf8') as f:
                     json.dump(lista_diputados, f)
                 print('guardado Ok!')
             break
+    #
 
     print('Creando Lista Maestra')
     lista_legisladores.extend(lista_diputados)
@@ -273,24 +275,15 @@ if __name__ == '__main__':
     print(f'Legisladores Obtenidos: {len(lista_legisladores)}')
 
     # Traducir datos
+    print('Traduciendo datos')
     for legislador in lista_legisladores:
         region = legislador['region']
         partido = legislador['partido']
+
         if legislador['tipo'] == 'Senador':
             legislador['tipo'] = ID_TIPO_SENADOR
             legislador['region'] = TRADUCCION_REGIONES_SENADORES.get(region)
             legislador['partido'] = TRADUCCION_PARTIDOS_SENADORES.get(partido)
-
-            # Distritos a modelo
-            distritos_modelos = []
-            for str_distrito in legislador['distritos']:
-                num_distrito = int(str_distrito)
-                distrito = models.Distrito.query.\
-                    filter_by(numero=num_distrito,
-                              antiguo=LEGISLATURA_ANTIGUA).\
-                    first()
-                distritos_modelos.append(distrito)
-            legislador['distritos'] = distritos_modelos
 
             # Circunscripcion a modelo
             num_circun = int(legislador['circunscripcion'])
@@ -298,6 +291,10 @@ if __name__ == '__main__':
                 filter_by(numero=num_circun,
                           antiguo=LEGISLATURA_ANTIGUA).\
                 first()
+
+            # Distritos
+            legislador['distritos'] = legislador['circunscripcion'].distritos
+
         else:
             legislador['tipo'] = ID_TIPO_DIPUTADO
             legislador['region'] = TRADUCCION_REGIONES_DIPUTADOS.get(region)
@@ -309,13 +306,26 @@ if __name__ == '__main__':
                 filter_by(numero=num_distrito,
                           antiguo=LEGISLATURA_ANTIGUA).\
                 first()
+    #
 
-    # Ingresar legisladores al sistema
-    resultado = ingresar_legisladores(db, lista_legisladores, periodo_id)
-    if resultado:
-        print('ok!')
-    else:
-        print('no se agregraron legisladores.')
+    if accion == '9999':
+        # Ingresar legisladores al sistema
+        print('\nIngresando al sistema por primera vez')
+        resultado = ingresar_legisladores(db, lista_legisladores, periodo_id)
+        print()
+        if resultado:
+            print('ok!')
+        else:
+            print('No se agregraron legisladores.')
+
+    if accion == '1':
+        print('\n Actualizando Legisladores')
+        resultado = actualizar_ingresar_senadores(db, lista_senadores, periodo_id)
+        print()
+        if resultado:
+            print('ok!')
+        else:
+            print('No se agregraron legisladores.')
 
 else:
     print('THIS IS NOT A MODULE')
