@@ -69,7 +69,6 @@ Esta siendo alojado en https://plabin.ddns.net/project_snitch
     - **region**: Nombre de Región del Senador. (str)
     - **circunscripcion**: Numero Circunscripción del Senador. (str)
     - **partido**: Nombre de Partido del Senador. (str)
-    - **distritos**: Distritos del senador (int[])
 
 + ### diputados.json
     - **tipo**: Tipo de Legislador

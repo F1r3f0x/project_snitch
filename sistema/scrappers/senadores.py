@@ -61,9 +61,12 @@ def get_lista_senadores():
 
 if __name__ == '__main__':
     import json
+
     print('Scrappers Senado.cl - Project Snitch')
     print('Buscando senadores en senado.cl')
+
     lista = get_lista_senadores()
+    print(f'Senadores Obtenidos = {len(lista)}')
 
     print('Escribiendo a JSON')
 

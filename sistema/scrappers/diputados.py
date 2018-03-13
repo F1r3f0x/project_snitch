@@ -4,7 +4,7 @@
     GPLv3
 """
 import re
-import json
+from datetime import datetime
 from bs4 import BeautifulSoup
 from requests import get as requests_get
 from requests import exceptions as requests_exceptions
@@ -52,7 +52,8 @@ def get_datos_perfil(url_perfil):
             break
     region = f'{primera_string} {region[pos_siguiente:].strip()}'
 
-    email = soup.find('li', {'class': 'email'}).text.strip().replace('\n', '').replace('\r', '')
+    email = soup.find('li', {'class': 'email'}).text.strip().\
+        replace('\n', '').replace('\r', '')
 
     telefono = soup.find('div', {'class': 'phones'}).p.contents[2]
     telefono = re.findall('([1-9+()]+)', telefono)
@@ -88,7 +89,9 @@ def get_lista_diputados(_dev=False):
     try:
         diputados_periodo = soup.find_all('DiputadoPeriodo')
     except AttributeError as err:
-        print('Error al obtener XML de diputados (no parece ser el archivo correcto)')
+        print(
+            'Error al obtener XML de diputados (no parece ser el archivo correcto)'
+        )
         print(err)
         return None
 
@@ -121,7 +124,7 @@ def get_lista_diputados(_dev=False):
             nuevo_diputado['email'] = ''
             nuevo_diputado['telefono'] = ''
 
-        print(f'Diputado Agregado [{nuevo_diputado["id_interna"]}]: {nuevo_diputado["primer_nombre"]} {nuevo_diputado["primer_apellido"]} - {nuevo_diputado["partido"]}')
+        print(nuevo_diputado)
         lista_diputados.append(nuevo_diputado)
 
     print(f'Diputados Obtenidos: {len(lista_diputados)}')
@@ -134,14 +137,20 @@ def _get_xml_dev():
 
 
 if __name__ == "__main__":
+    import json
 
-    print('\nScrapper Diputados - F1r3f0x - 2018\n\n')
+    print('Scrapper Diputados - Project Snitch')
 
     diputados = get_lista_diputados()
 
+    fecha = datetime.now()
+    fecha_nombre = f'{fecha.year}-{fecha.month}-{fecha.day}'
+    nombre_json = f'diputados-{fecha_nombre}.json'
+
     print('Escribiendo archivo JSON')
     if diputados:
-        with open('../datos/diputados.json', 'w', encoding='utf8') as _file:
+        with open(f'../../datos/{nombre_json}', 'w', encoding='utf8') as _file:
             json.dump(diputados, _file)
 
-    print('Listo...')
+    print(f'Guardado en {nombre_json}')
+    print('ok!')
