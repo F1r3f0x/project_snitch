@@ -161,9 +161,142 @@ def ingresar_legisladores(db, list_legisladores, id_periodo):
 # TODO
 def actualizar_ingresar_senadores(db, lista_legisladores, id_periodo):
     """
-    Actualizacion e Ingreso de nuevos senadores
+    Actualizar legisladores
+
+    Args:
+        db (SQLAlchemy): ORM
+        lista_legisladores (list): Diccionario con datos de los legisladores (obtenidos con su scrapper)
+        id_periodo (int): El periodo legislativo de los legisladores.
+
+    Returns:
+        bool: Resultado de la operacion.
+
     """
-    return True
+    legisladores_agregar = []
+
+    for legislador in lista_legisladores:
+        # Legislador
+        _legislador = models.Legislador(
+            legislador['primer_nombre'],
+            '',
+            legislador['primer_apellido'],
+            '',
+            None,
+            legislador['email'],
+            legislador['telefono'],
+            '',
+            True,
+            estado_noticioso_id=1,
+        )
+        segundo_nombre = legislador['segundo_nombre']
+        if segundo_nombre:
+            _legislador.segundo_nombre = segundo_nombre
+        segundo_apellido = legislador['segundo_apellido']
+        if segundo_apellido:
+            _legislador.segundo_apellido = segundo_apellido
+        #
+
+        # Comparar legislador
+        legislador_actualizar = models.Legislador.query.filter_by(
+            primer_nombre=_legislador.primer_nombre,
+            segundo_nombre=_legislador.segundo_nombre,
+            primer_apellido=_legislador.primer_apellido,
+            segundo_apellido=_legislador.segundo_apellido
+        ).first()
+
+        if legislador_actualizar:
+            print('\nEl legislador existe en la base de datos')
+            print('En sistema:')
+            legislador_actualizar.print_to_console()
+            print('Encontrado:')
+            _legislador.print_to_console()
+
+            if input('Actualizar? (y/n) ').lower().strip() == 'y':
+                print('Comparando valores...')
+
+                if legislador_actualizar.telefono != _legislador.telefono:
+                    print('Telefono es distinto')
+                    print(f'En sistema: {legislador_actualizar.telefono}')
+                    print(f'Nuevo: {_legislador.telefono}')
+                    if input('Actualizar? (y/n) ').lower().strip() == 'y':
+                        legislador_actualizar.telefono = _legislador.telefono
+
+                if legislador_actualizar.email != _legislador.email:
+                    print('Email es distinto')
+                    print(f'En sistema: {legislador_actualizar.email}')
+                    print(f'Nuevo: {_legislador.email}')
+                    if input('Actualizar? (y/n) ').lower().strip() == 'y':
+                        legislador_actualizar.email = _legislador.email
+        else:
+            print('\nLegislador a agregar:')
+            _legislador.print_to_console()
+        #
+
+        # Cargo
+        _cargo = models.CargoLegislativo(0)
+        _cargo.tipo_legislador = models.TipoLegislador.query.filter_by(id=legislador['tipo']).first()
+        _cargo.region = models.Region.query.filter_by(id=legislador['region']).first()
+        _cargo.periodo = models.Periodo.query.filter_by(id=id_periodo).first()
+        _cargo.partido = models.PartidoPolitico.query.filter_by(id=legislador['partido']).first()
+        _cargo.id_interna = legislador['id_interna']
+        _cargo.circunscripcion = legislador.get('circunscripcion')
+
+        distritos = legislador.get('distritos')
+        if distritos:
+            _cargo.distritos = legislador['distritos']
+        else:
+            _cargo.distritos = [legislador['distrito']]
+
+        print('Cargo obtenido:')
+        _cargo.print_to_console()
+
+        # Agregar legislador a sesion para vincular el cargo.
+        # El legislador a actualizar ya es parte de la sesion.
+        db.session.add(_legislador)
+
+        cargo_nuevo = True
+        if legislador_actualizar:
+            if input('TODO: Este cargo es nuevo? (y/n) ').lower().strip() == 'y':
+                legislador_actualizar.cargos.append(_cargo)
+                legislador_actualizar.ultimo_tipo_legislador_id = legislador['tipo']
+            else:
+                # TODO
+                cargo_nuevo = False
+        else:
+            _legislador.cargos = [_cargo]
+            _legislador.ultimo_tipo_legislador_id = legislador['tipo']
+        #
+
+        print('\nSumario:')
+        if legislador_actualizar:
+            legislador_actualizar.print_to_console()
+        else:
+            _legislador.print_to_console()
+        print(f'cargo nuevo = {cargo_nuevo}')
+        print('=====================================')
+
+        if input('Agregar? (y/n) ').lower().strip() == 'y':
+            if legislador_actualizar:
+                db.session.add(legislador_actualizar)
+                legisladores_agregar.append(legislador_actualizar)
+            else:
+                legisladores_agregar.append(_legislador)
+        else:
+            if legislador_actualizar:
+                db.session.expunge(legislador_actualizar)
+            db.session.expunge(_legislador)
+            db.session.expunge(_cargo)
+
+
+    print(f'Numero Legisladores a agregar = {len(legisladores_agregar)}')
+    print('Legisladores:')
+    for l in legisladores_agregar:
+        print(l)
+    if input('Confirmar cambios? (y/n) ').lower().strip() == 'y':
+        db.session.commit()
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
@@ -244,7 +377,7 @@ if __name__ == '__main__':
 
         if fuente == 'w':
             guardar = False
-            if input('Guardar JSON legisladores? y / n ').lower().strip() == 'y':
+            if input('Guardar JSON legisladores? (y/n) ').lower().strip() == 'y':
                 guardar = True
 
             print('\nObteniendo Legisladores\n')
@@ -319,7 +452,7 @@ if __name__ == '__main__':
             print('No se agregraron legisladores.')
 
     if accion == '1':
-        print('\n Actualizando Legisladores')
+        print('\nActualizando Legisladores')
         resultado = actualizar_ingresar_senadores(db, lista_senadores, periodo_id)
         print()
         if resultado:
