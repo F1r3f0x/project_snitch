@@ -31,8 +31,8 @@
             <p><b>Período Actual:</b> {{ cargo.periodo.nombre }} ({{ cargo.periodo.anno_inicio }} - {{ cargo.periodo.anno_fin }})</p>
             <p><b>Partido Politico:</b> {{ cargo.partido.nombre }}</p>
             <p><b>Región:</b> Región {{cargo.region.nombre}}, {{cargo.region.numero}}</p>
-            <p><b>Email:</b> ${{ cargo.email }}</p>
-            <p><b>Telefono:</b> ${{ cargo.telefono}}</p>
+            <p><b>Email:</b> {{ legislador.email }}</p>
+            <p><b>Telefono:</b> {{ legislador.telefono}}</p>
             {% if senador %}
                 <p><b>Circunscripción:</b> {{cargo.circunscripcion.numero}}</p>
                 <p><b>Distritos:</b> {{distritos}}</p>
