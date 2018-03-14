@@ -144,6 +144,7 @@ class Legislador(db.Model):
             'texto_buscable': self.texto_buscable,
             'sexo (es Hombre)': self.sexo,
             'email': self.email,
+            'telefono': self.telefono,
             'foto_url': self.foto_url,
             'buscar_noticias': self.buscar_noticias,
             'estado_noticioso_id': self.estado_noticioso_id,
@@ -154,6 +155,15 @@ class Legislador(db.Model):
         }
 
         return dict_legislador
+
+    def print_to_console(self):
+        print(f'Legislador: {self.primer_nombre} {self.segundo_nombre} {self.primer_apellido} {self.segundo_apellido}')
+        print(f'\tEmail: {self.email}')
+        print(f'\tTelefono: {self.telefono}')
+        print(f'\tUltimo Tipo id: {self.ultimo_tipo_legislador_id}')
+        print(f'\tCargos:')
+        for _c in self.cargos:
+            print(f'\t\t{_c.__repr__()}')
 
     def __repr__(self):
         return f'<Legislador {self.id}: {self.primer_apellido}, {self.primer_nombre}>'

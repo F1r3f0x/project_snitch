@@ -123,5 +123,15 @@ class CargoLegislativo(db.Model):
         self.distritos.append(distrito)
         return len(self.distritos)
 
+    def print_to_console(self):
+        print(f'Cargo Legislativo en {self.periodo}')
+        print(f'\tTipo: {self.tipo}')
+        print(f'\tid_interna: {self.id_interna}')
+        print(f'\tFecha Ingreso: {self.fecha_ingreso}')
+        print(f'\tRegion: {self.region}')
+        print(f'\tPartido: {self.partido}')
+        print(f'\tCircunscripcion: {self.circunscripcion}')
+        print(f'\tDistritos: {self.distritos}')
+
     def __repr__(self):
         return f'<CargoLegislativo {self.legislador}: Periodo={self.periodo}, Partido={self.partido}, Region={self.region}>'

@@ -78,6 +78,7 @@ def home():
 def mostrar_legislador(id_legislador):
     try:
         legislador = Legislador.query.get(id_legislador)
+        legislador.print_to_console()
 
         if legislador:
             if len(legislador.cargos) > 0:
