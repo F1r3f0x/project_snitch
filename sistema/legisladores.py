@@ -35,6 +35,7 @@ TRADUCCION_REGIONES_SENADORES = {
     'Región del Bío-Bío':                                   10,
     'Región de la Araucanía':                               11,
     'Región de los Ríos':                                   12,
+    'Región de Los Ríos':                                   12,
     'Región de Los Lagos':                                  13,
     'Región de Aysén del General Carlos Ibáñez del Campo':  14,
     'Región de Magallanes y la Antártica Chilena':          15
@@ -206,27 +207,31 @@ def actualizar_ingresar_senadores(db, lista_legisladores, id_periodo):
 
         if legislador_actualizar:
             print('\nEl legislador existe en la base de datos')
-            print('En sistema:')
-            legislador_actualizar.print_to_console()
-            print('Encontrado:')
-            _legislador.print_to_console()
+            print(f'En sistema: {legislador_actualizar}')
+            print(f'Encontrado: {_legislador}')
+
+            telefono_nuevo = legislador['telefono']
+            email_nuevo = legislador['email']
 
             if input('Actualizar? (y/n) ').lower().strip() == 'y':
                 print('Comparando valores...')
 
-                if legislador_actualizar.telefono != _legislador.telefono:
-                    print('Telefono es distinto')
-                    print(f'En sistema: {legislador_actualizar.telefono}')
-                    print(f'Nuevo: {_legislador.telefono}')
-                    if input('Actualizar? (y/n) ').lower().strip() == 'y':
-                        legislador_actualizar.telefono = _legislador.telefono
+                _legislador = legislador_actualizar
+                db.session.expunge(legislador_actualizar)
 
-                if legislador_actualizar.email != _legislador.email:
-                    print('Email es distinto')
-                    print(f'En sistema: {legislador_actualizar.email}')
-                    print(f'Nuevo: {_legislador.email}')
+                if _legislador.telefono != telefono_nuevo:
+                    print('Telefono es distinto')
+                    print(f'En sistema: {_legislador.telefono}')
+                    print(f'Nuevo: {telefono_nuevo}')
                     if input('Actualizar? (y/n) ').lower().strip() == 'y':
-                        legislador_actualizar.email = _legislador.email
+                        _legislador.telefono = telefono_nuevo
+
+                if _legislador.email != email_nuevo:
+                    print('Email es distinto')
+                    print(f'En sistema: {_legislador.email}')
+                    print(f'Nuevo: {email_nuevo}')
+                    if input('Actualizar? (y/n) ').lower().strip() == 'y':
+                        _legislador.email = email_nuevo
         else:
             print('\nLegislador a agregar:')
             _legislador.print_to_console()
@@ -250,15 +255,13 @@ def actualizar_ingresar_senadores(db, lista_legisladores, id_periodo):
         print('Cargo obtenido:')
         _cargo.print_to_console()
 
-        # Agregar legislador a sesion para vincular el cargo.
-        # El legislador a actualizar ya es parte de la sesion.
         db.session.add(_legislador)
 
         cargo_nuevo = True
         if legislador_actualizar:
             if input('TODO: Este cargo es nuevo? (y/n) ').lower().strip() == 'y':
-                legislador_actualizar.cargos.append(_cargo)
-                legislador_actualizar.ultimo_tipo_legislador_id = legislador['tipo']
+                _legislador.cargos.append(_cargo)
+                _legislador.ultimo_tipo_legislador_id = legislador['tipo']
             else:
                 # TODO
                 cargo_nuevo = False
@@ -268,24 +271,14 @@ def actualizar_ingresar_senadores(db, lista_legisladores, id_periodo):
         #
 
         print('\nSumario:')
-        if legislador_actualizar:
-            legislador_actualizar.print_to_console()
-        else:
-            _legislador.print_to_console()
+        _legislador.print_to_console()
         print(f'cargo nuevo = {cargo_nuevo}')
         print('=====================================')
 
         if input('Agregar? (y/n) ').lower().strip() == 'y':
-            if legislador_actualizar:
-                db.session.add(legislador_actualizar)
-                legisladores_agregar.append(legislador_actualizar)
-            else:
-                legisladores_agregar.append(_legislador)
+            legisladores_agregar.append(_legislador)
         else:
-            if legislador_actualizar:
-                db.session.expunge(legislador_actualizar)
             db.session.expunge(_legislador)
-            db.session.expunge(_cargo)
 
 
     print(f'Numero Legisladores a agregar = {len(legisladores_agregar)}')
