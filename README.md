@@ -5,6 +5,8 @@ Project Snitch es desarrollado con Flask y SQLAlchemy.
 
 Esta siendo alojado en https://plabin.ddns.net/project_snitch
 
+Trello Board: https://trello.com/b/0vUCnalk/project-snitch
+
 ## Mapa de Proyecto
 + ### forms:
     Formularios para la aplicación Web.
@@ -38,8 +40,12 @@ Esta siendo alojado en https://plabin.ddns.net/project_snitch
   - WTForms (2.1)
   - uWSGI (2.0.17)
   
+## Diagrama DB
+![diagrama db](/design/diagrama_db.png)
+  
 ## Como ejecutar el proyecto:
-  - Crear base de datos
+  - Extraer a "/project_snitch"
+  - Crear base de datos y llenar con scripts en "/design"
   - Agregar archivo credenciales.txt en "../project_snitch" (consultar ejemplo_crendenciales.txt)
     
     Formato:
@@ -50,7 +56,7 @@ Esta siendo alojado en https://plabin.ddns.net/project_snitch
     - secret_key
     - recaptcha_publica
     - recaptcha_privada
-  - Ejecutar wsgi.py
+  - Ejecutar wsgi.py 
   
         python wsgi.py
 
@@ -87,4 +93,5 @@ Esta siendo alojado en https://plabin.ddns.net/project_snitch
  
  
 Patricio Alejandro Labin Correa (F1r3f0x) - (2017-2018)
+
 GPLv3
