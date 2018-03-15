@@ -354,6 +354,10 @@ def editar_perfil():
 
 ################################################################################
 # API
+@app.route('/api')
+def mostrar_api():
+    return render_template('api.html')
+
 
 @app.route('/api/legisladores/', methods=['GET'])
 def get_legislador():
@@ -381,10 +385,6 @@ def get_legislador():
         return jsonify(data='El Legislador no existe'), 404
 
 
-@app.route('/api')
-def mostrar_api():
-    return render_template('api.html')
-
 ################################################################################
 # Funciones internas
 
@@ -400,14 +400,14 @@ def autocomplete_legislador():
 
     return jsonify(nombres=nombres)
 
-
-@app.route('/reindex')
-@login_required
-@requiere_admin
-def index():
-    searcher.delete_index()
-    searcher.create_index()
-    flash('Reindex OK!', 'success')
-    return redirect(url_for('home'))
+# SimpleSearch no necesita index
+# @app.route('/reindex')
+# @login_required
+# @requiere_admin
+# def index():
+#     searcher.delete_index()
+#     searcher.create_index()
+#     flash('Reindex OK!', 'success')
+#     return redirect(url_for('home'))
 
 ################################################################################

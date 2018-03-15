@@ -18,6 +18,7 @@ class Config(object):
     CHANGELOG_DIR = 'changelog.txt'
 
     MSEARCH_ENABLE = True
+    MSEARCH_BACKEND = 'simple'
 
     # Cifra cookies, es requerida por ciertas librerias.
     SECRET_KEY = 'TU_PROPIA_CLAVE_SECRETA_AQUI'
