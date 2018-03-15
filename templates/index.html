@@ -5,7 +5,7 @@
     <h2 class="text-center">Project Snitch</h2>
     <div class="form-group mt-sm-4">
         <form action="{{ url_for('buscar') }}" method="get" role="form" id="form" onsubmit="return false;">
-                <input type="text" class="form-control form-control" name="buscar" id="buscar"
+                <input type="text" class="form-control" name="buscar" id="buscar"
                        placeholder="Buscar Senador o Diputado">
         </form>
     </div>
@@ -23,6 +23,34 @@
 
 {% block page_script %}
     <script>
+        // Autocomplete
+        $(function () {
+            $("#buscar").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url:"{{ url_for("autocomplete_legislador") }}",
+                        dataType:"json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response(data.data);
+                        }
+                    });
+                },
+                minLenght: 3,
+                focus: function (event, ui) {
+                    $("#buscar").val(ui.item.label)
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#buscar").val(ui.item.label);
+                    window.location.href = "{{ url_for('home')}}" + "legislador/" + ui.item.value;
+                }
+            });
+        });
+
+        // Search
         var form = document.getElementById("form");
 
         var buscar = document.getElementById("buscar");
@@ -34,4 +62,5 @@
             }
         }
     </script>
+
 {% endblock %}

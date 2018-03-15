@@ -78,7 +78,6 @@ def home():
 def mostrar_legislador(id_legislador):
     try:
         legislador = Legislador.query.get(id_legislador)
-        #legislador.print_to_console()
 
         if legislador:
             if len(legislador.cargos) > 0:
@@ -388,17 +387,15 @@ def get_legislador():
 ################################################################################
 # Funciones internas
 
-@app.route('/service/legislador/autocomplete')
-@login_required
+@app.route('/api/legislador/autocomplete')
 def autocomplete_legislador():
-    legisladores = Legislador.query.all()
+    termino = str(request.args.get('term')).strip().lower()
+    if termino:
+        legisladores = Legislador.query.msearch(termino)
+        respuesta_json = [{'label': str(_l), 'value': str(_l.id)} for _l in legisladores]
+        return jsonify(data=respuesta_json), 200
 
-    nombres = []
-
-    for legislador in legisladores:
-        nombres.append({'primer_nombre': legislador.primer_nombre, 'primer_apellido': legislador.primer_apellido})
-
-    return jsonify(nombres=nombres)
+    return jsonify(data='El termino no se encuentra'), 404
 
 # SimpleSearch no necesita index
 # @app.route('/reindex')

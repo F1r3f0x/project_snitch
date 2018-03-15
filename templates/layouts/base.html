@@ -15,9 +15,21 @@
 	    <title>Project Snitch</title>
     {% endif %}
 
+    <!-- jQuery UI -->
+    <link href="{{ url_for('static',filename='css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='css/jquery-ui.structure.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='static/css/jquery-ui.structure.min.css') }}" rel="stylesheet" type="text/css">
+
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
     <script src="{{ url_for('static', filename='js/fontawesome-all.js') }}"></script>
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static',filename='js/jquery-3.2.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+
+    <!-- Bootstrap -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
 </head>
 
@@ -63,7 +75,7 @@
                     </li>
                 </ul>
 
-                {% block search_bar %} {% endblock %}
+{#                {% block search_bar %} {% endblock %}#}
 
                 <hr>
 
@@ -115,15 +127,6 @@
             </div>
         </div>
      </footer>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="{{ url_for('static',filename='js/jquery-3.2.1.js') }}"></script>
-    <script>
-        window.jQuery
-    </script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     {% block page_script %}
     {% endblock %}
