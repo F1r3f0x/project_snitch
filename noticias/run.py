@@ -11,7 +11,7 @@
 """
 
 import sys
-sys.path.extend(['/home/pi/Serving/Flask/project_snitch'])  # Working Directory
+sys.path.extend(['../../project_snitch'])  # Source Path
 
 from project_snitch.noticias import latercera
 latercera.agregar_noticias()

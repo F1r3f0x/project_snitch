@@ -1,3 +1,3 @@
 # Ejemplo de cron job
 buscar_noticias_project_snitch
-2 0 * * * cd /home/pi/Serving/Flask/project_snitch/ && /home/pi/Serving/Flask/project_snitch/psnitch_py/bin/python  /home/pi/Serving/Flask/project_snitch/project_snitch/noticias/run.py >/dev/null 2>&1
+2 0 * * * cd /home/pi/Serving/Flask/project_snitch/project_snitch && /home/pi/Serving/Flask/project_snitch/psnitch_py/bin/python  /home/pi/Serving/Flask/project_snitch/project_snitch/noticias/run.py >/dev/null 2>&1
