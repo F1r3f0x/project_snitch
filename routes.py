@@ -422,11 +422,16 @@ def ajax_nombres():
 
 @app.route('/ajax/legislador/noticias')
 def ajax_legislador_noticias():
-    id = str(request.args.get('id')).strip().lower()
-    page = int(request.args.get('page'))
-    if id and page:
+    noticias = []
+    try:
+        id = int(request.args.get('id'))
         noticias = Legislador.query.get(id).noticias
-        return 'hola'
+    except (AttributeError, ValueError):
+        pass
+
+    if noticias:
+        data = [_noticia.ajax_dict() for _noticia in noticias]
+        return jsonify(data), 200
 
     return jsonify(data='El termino no se encuentra'), 404
 
