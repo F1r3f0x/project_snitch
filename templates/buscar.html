@@ -1,9 +1,5 @@
 {%extends 'layouts/base.html' %}
 
-{% block search_bar %}
-    {% include 'components/search_bar.html' %}
-{% endblock %}
-
 {% block page_content %}
     <h1 class="py-4">Buscar "{{ busqueda }}"</h1>
     {% if results %}

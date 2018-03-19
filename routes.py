@@ -141,6 +141,7 @@ def mostrar_legislador(id_legislador):
                                                     id_legislador=id_legislador))
 
                         return render_template('legislador.html',
+                                               barra_busqueda=True,
                                                titulo=str(legislador),
                                                senador=is_senador,
                                                legislador=legislador,
@@ -151,6 +152,7 @@ def mostrar_legislador(id_legislador):
                                                )
 
                 return render_template('legislador.html',
+                                       barra_busqueda=True,
                                        titulo=str(legislador),
                                        senador=is_senador,
                                        legislador=legislador,
@@ -184,6 +186,7 @@ def lista_legisladores():
             lista_diputados.append(l)
 
     return render_template('lista_legisladores.html',
+                           barra_busqueda=True,
                            titulo='Lista Legisladores',
                            senadores=lista_senadores,
                            diputados=lista_diputados)
@@ -201,11 +204,15 @@ def buscar():
                 resultado_busqueda.append({'legislador': r, 'ultimo_cargo': cargos[len(cargos)-1]})
         if results:
             return render_template('buscar.html',
+                                   barra_busqueda=True,
                                    titulo=f'Buscar "{texto}"',
                                    busqueda=texto,
                                    results=resultado_busqueda)
 
-        return render_template('buscar.html', titulo='Buscar', busqueda=texto)
+        return render_template('buscar.html',
+                               barra_busqueda=True,
+                               titulo='Buscar',
+                               busqueda=texto)
     else:
         return redirect(url_for('home'))
 
@@ -230,8 +237,11 @@ def registrar_usuario():
         flash('Estas registrado!', 'success')
         return redirect(url_for('home'))
 
-    return render_template('registrar.html', titulo='Registrarse',
-                           form=form, debug=app.config['DEBUG'])
+    return render_template('registrar.html',
+                           barra_busqueda=True,
+                           titulo='Registrarse',
+                           form=form,
+                           debug=app.config['DEBUG'])
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -264,7 +274,11 @@ def login_usuario():
         else:
             return redirect(url_for('home'))
 
-    return render_template('login.html', titulo='Login', form=form, debug=app.config['DEBUG'])
+    return render_template('login.html',
+                           barra_busqueda=True,
+                           titulo='Login',
+                           form=form,
+                           debug=app.config['DEBUG'])
 
 
 @app.route('/logout')
@@ -287,6 +301,7 @@ def mostrar_lista_noticias():
                            pagina=noticias.prev_num) if noticias.has_prev else None
 
     return render_template('lista_noticias.html',
+                           barra_busqueda=True,
                            titulo='Lista de Noticias',
                            pagina=pagina,
                            noticias=noticias.items,
@@ -312,8 +327,11 @@ def mostrar_perfil():
 
         return redirect(url_for('mostrar_perfil'))
 
-    return render_template('perfil.html', titulo='Mi Perfil',
-                           usuario=current_user, form=form)
+    return render_template('perfil.html',
+                           barra_busqueda=True,
+                           titulo='Mi Perfil',
+                           usuario=current_user,
+                           form=form)
 
 
 @app.route('/editar_perfil', methods=['GET', 'POST'])
@@ -348,8 +366,11 @@ def editar_perfil():
 
         return redirect(url_for('mostrar_perfil'))
 
-    return render_template('editar_perfil.html', titulo='Editar Perfil',
-                           usuario=current_user, form=form,
+    return render_template('editar_perfil.html',
+                           barra_busqueda=True,
+                           titulo='Editar Perfil',
+                           usuario=current_user,
+                           form=form,
                            debug=app.config['DEBUG'])
 
 
@@ -418,13 +439,13 @@ def funcion_test():
     return render_template('tests/jquery_tests.html')
 
 # SimpleSearch no necesita index
-# @app.route('/reindex')
-# @login_required
-# @requiere_admin
-# def index():
-#     searcher.delete_index()
-#     searcher.create_index()
-#     flash('Reindex OK!', 'success')
-#     return redirect(url_for('home'))
+@app.route('/reindex')
+@login_required
+@requiere_admin
+def index():
+    searcher.delete_index()
+    searcher.create_index()
+    flash('Reindex OK!', 'success')
+    return redirect(url_for('home'))
 
 ################################################################################
