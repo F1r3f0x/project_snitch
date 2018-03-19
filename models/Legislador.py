@@ -39,7 +39,7 @@ class Legislador(db.Model):
     """
 
     __tablename__ = 'legislador'
-    __searchable__ = ['texto_buscable']
+    __searchable__ = ['texto_buscable', 'primer_nombre', 'primer_apellido']
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     primer_nombre = db.Column(db.String(256), nullable=False)
