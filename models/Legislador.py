@@ -1,6 +1,7 @@
 from datetime import datetime
-from project_snitch import db, ID_SENADOR#, whooshee
+from project_snitch import db, ID_SENADOR
 import project_snitch.my_tools.funciones as tools
+from project_snitch.models.utilitaria.EnviableJSON import EnviableJSON
 
 noticias_legislador = db.Table(
     'noticia_legislador',
@@ -11,7 +12,7 @@ noticias_legislador = db.Table(
 )
 
 
-class Legislador(db.Model):
+class Legislador(db.Model, EnviableJSON):
     """
     Modelo SQLAlchemy de Legislador.
 
@@ -122,6 +123,21 @@ class Legislador(db.Model):
     def is_senador(self):
         return self.ultimo_tipo_legislador_id == ID_SENADOR
 
+    def print_to_console(self):
+        print(f'Legislador: {self.primer_nombre} {self.segundo_nombre} {self.primer_apellido} {self.segundo_apellido}')
+        print(f'\tEmail: {self.email}')
+        print(f'\tTelefono: {self.telefono}')
+        print(f'\tUltimo Tipo id: {self.ultimo_tipo_legislador_id}')
+        print(f'\tCargos:')
+        for _c in self.cargos:
+            print(f'\t\t{_c.__repr__()}')
+
+    def __repr__(self):
+        return f'<Legislador {self.id}: {self.primer_apellido}, {self.primer_nombre}>'
+
+    def __str__(self):
+        return f'{self.primer_nombre} {self.primer_apellido} {self.segundo_apellido}'
+
     def json_dict(self):
         noticias = None
         if self.noticias:
@@ -156,17 +172,5 @@ class Legislador(db.Model):
 
         return dict_legislador
 
-    def print_to_console(self):
-        print(f'Legislador: {self.primer_nombre} {self.segundo_nombre} {self.primer_apellido} {self.segundo_apellido}')
-        print(f'\tEmail: {self.email}')
-        print(f'\tTelefono: {self.telefono}')
-        print(f'\tUltimo Tipo id: {self.ultimo_tipo_legislador_id}')
-        print(f'\tCargos:')
-        for _c in self.cargos:
-            print(f'\t\t{_c.__repr__()}')
-
-    def __repr__(self):
-        return f'<Legislador {self.id}: {self.primer_apellido}, {self.primer_nombre}>'
-
-    def __str__(self):
-        return f'{self.primer_nombre} {self.primer_apellido} {self.segundo_apellido}'
+    def ajax_dict(self):
+        return 'hola'

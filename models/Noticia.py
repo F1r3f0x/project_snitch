@@ -1,10 +1,11 @@
 from datetime import datetime
 import sqlalchemy.dialects.mysql as mysql
 from project_snitch import db
+from project_snitch.models.utilitaria.EnviableAJAX import EnviableAJAX
 import project_snitch.my_tools.funciones as tools
 
 
-class Noticia(db.Model):
+class Noticia(db.Model, EnviableAJAX):
     """
     Modelo SQLAlchemy de Noticia.
 
@@ -72,3 +73,17 @@ class Noticia(db.Model):
 
     def __repr__(self):
         return f'<Noticia {self.id}: {self.titulo}, {self.url}, {self.fecha}>'
+
+    def ajax_dict(self):
+        ajax_dict = {
+            'label': self.titulo,
+            'value': self.id,
+            'contenido': self.contenido_texto,
+            'url': self.url,
+            'fecha': self.fecha,
+            'fuente_noticias': {
+                'nombre': self.fuente.nombre,
+                'id': self.fuente.id
+            },
+        }
+        return ajax_dict
