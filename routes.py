@@ -54,7 +54,8 @@ def requiere_admin(fun):
     @wraps(fun)
     def vista_admin(*args, **kwargs):
         if not current_user.is_admin():
-            flash('Necesitas ser administrador para entrar a esta pagina', 'danger')
+            flash('Necesitas ser administrador para entrar a esta pagina',
+                  'danger')
             return redirect(url_for('home'))
         return fun(*args, **kwargs)
     return vista_admin
@@ -65,7 +66,7 @@ def load_user(id):
     return Usuario.query.get(int(id))
 
 
-################################################################################
+###############################################################################
 # Rutas
 
 @app.route('/', methods=['GET'])
@@ -136,7 +137,8 @@ def mostrar_legislador(id_legislador):
 
                             flash(f'Sapeando {legislador.primer_nombre} {legislador.primer_apellido}!', 'success')
 
-                            return redirect(url_for('mostrar_legislador', id_legislador=id_legislador))
+                            return redirect(url_for('mostrar_legislador',
+                                                    id_legislador=id_legislador))
 
                         return render_template('legislador.html',
                                                titulo=str(legislador),
@@ -351,7 +353,7 @@ def editar_perfil():
                            debug=app.config['DEBUG'])
 
 
-################################################################################
+###############################################################################
 # API
 @app.route('/api')
 def mostrar_api():
@@ -384,11 +386,10 @@ def get_legislador():
         return jsonify(data='El Legislador no existe'), 404
 
 
-################################################################################
-# Funciones internas
-
-@app.route('/api/legislador/autocomplete')
-def autocomplete_legislador():
+###############################################################################
+# Ajax
+@app.route('/ajax/nombres_legisladores')
+def ajax_nombres():
     termino = str(request.args.get('term')).strip().lower()
     if termino:
         legisladores = Legislador.query.msearch(termino)
@@ -396,6 +397,25 @@ def autocomplete_legislador():
         return jsonify(data=respuesta_json), 200
 
     return jsonify(data='El termino no se encuentra'), 404
+
+
+@app.route('/ajax/legislador/noticias')
+def ajax_legislador_noticias():
+    id = str(request.args.get('id')).strip().lower()
+    page = int(request.args.get('page'))
+    if id and page:
+        noticias = Legislador.query.get(id).noticias
+        return 'hola'
+
+    return jsonify(data='El termino no se encuentra'), 404
+
+
+###############################################################################
+# Tests
+
+@app.route('/test')
+def funcion_test():
+    return render_template('tests/jquery_tests.html')
 
 # SimpleSearch no necesita index
 # @app.route('/reindex')

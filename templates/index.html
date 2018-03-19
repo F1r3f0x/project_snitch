@@ -28,7 +28,7 @@
             $("#buscar").autocomplete({
                 source: function (request, response) {
                     $.ajax({
-                        url:"{{ url_for("autocomplete_legislador") }}",
+                        url:"{{ url_for("ajax_nombres") }}",
                         dataType:"json",
                         data: {
                             term: request.term
@@ -40,14 +40,21 @@
                 },
                 minLenght: 3,
                 focus: function (event, ui) {
-                    $("#buscar").val(ui.item.label)
+                    $("#buscar").val(ui.item.label);
+                    return false;
                 },
                 select: function (event, ui) {
                     event.preventDefault();
                     $("#buscar").val(ui.item.label);
                     window.location.href = "{{ url_for('home')}}" + "legislador/" + ui.item.value;
+                    return false;
                 }
-            });
+            }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+                ul.addClass("dropdown-menu");
+                return $( "<li class='dropdown-item'>" )
+                .append(item.label)
+                .appendTo( ul );
+            };
         });
 
         // Search
