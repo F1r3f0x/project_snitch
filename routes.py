@@ -194,7 +194,7 @@ def lista_legisladores():
 
 @app.route('/buscar')
 def buscar():
-    texto = str(request.values.get('buscar')).strip().lower()
+    texto = request.args.get('buscar', None, str).strip().lower()
     if texto:
         results = Legislador.query.msearch(texto)
         resultado_busqueda = []
@@ -202,7 +202,7 @@ def buscar():
             cargos = r.cargos
             if len(cargos) > 0:
                 resultado_busqueda.append({'legislador': r, 'ultimo_cargo': cargos[len(cargos)-1]})
-        if results:
+        if resultado_busqueda:
             return render_template('buscar.html',
                                    barra_busqueda=True,
                                    titulo=f'Buscar "{texto}"',
@@ -381,28 +381,18 @@ def mostrar_api():
     return render_template('api.html')
 
 
-@app.route('/api/legisladores/', methods=['GET'])
+@app.route('/api/legisladores', methods=['GET'])
 def get_legislador():
-    _id = request.args.get('id')
-    if _id:
-        try:
-            _id = int(_id)
-        except ValueError:
-            return jsonify(data='Id debe ser numero o estar vacío.'), HTTP_BAD_REQUEST
+    _id = request.args.get('id', 1, int)
 
     dict_respuesta = []
-    if not _id:
-        legisladores = Legislador.query.all()
-        for _l in legisladores:
-            dict_respuesta.append(_l.json_dict())
-    else:
-        legislador = Legislador.query.filter_by(id=_id).first()
+    legislador = Legislador.query.filter_by(id=_id).first()
 
-        if legislador:
-            dict_respuesta.append(legislador.json_dict())
+    if legislador:
+        dict_respuesta.append(legislador.json_dict())
 
     if dict_respuesta:
-        return jsonify(data={'legisladores': dict_respuesta})
+        return jsonify(data={'legisladores': dict_respuesta}), 200
     else:
         return jsonify(data='El Legislador no existe'), 404
 
@@ -411,11 +401,12 @@ def get_legislador():
 # Ajax
 @app.route('/ajax/nombres_legisladores')
 def ajax_nombres():
-    termino = str(request.args.get('term')).strip().lower()
+    termino = request.args.get('term', None, str).strip().lower()
     if termino:
         legisladores = Legislador.query.msearch(termino)
         respuesta_json = [{'label': str(_l), 'value': str(_l.id)} for _l in legisladores]
-        return jsonify(data=respuesta_json), 200
+        if respuesta_json:
+            return jsonify(data=respuesta_json), 200
 
     return jsonify(data='El termino no se encuentra'), 404
 
@@ -424,9 +415,9 @@ def ajax_nombres():
 def ajax_legislador_noticias():
     noticias = []
     try:
-        id = int(request.args.get('id'))
+        id = request.args.get('id', 1, int)
         noticias = Legislador.query.get(id).noticias
-    except (AttributeError, ValueError):
+    except AttributeError:
         pass
 
     if noticias:
@@ -444,13 +435,13 @@ def funcion_test():
     return render_template('tests/jquery_tests.html')
 
 # SimpleSearch no necesita index
-@app.route('/reindex')
-@login_required
-@requiere_admin
-def index():
-    searcher.delete_index()
-    searcher.create_index()
-    flash('Reindex OK!', 'success')
-    return redirect(url_for('home'))
+# @app.route('/reindex')
+# @login_required
+# @requiere_admin
+# def index():
+#     searcher.delete_index()
+#     searcher.create_index()
+#     flash('Reindex OK!', 'success')
+#     return redirect(url_for('home'))
 
 ################################################################################
