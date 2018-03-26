@@ -9,7 +9,7 @@ from datetime import datetime
 import copy
 
 from flask import jsonify, request, url_for, abort, flash, redirect
-from flask import render_template, session, logging
+from flask import render_template, session, logging, make_response
 
 from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_login import login_required
@@ -383,18 +383,27 @@ def mostrar_api():
 
 @app.route('/api/legisladores', methods=['GET'])
 def get_legislador():
-    _id = request.args.get('id', 1, int)
+
+    _id = request.args.get('id', None, int)
 
     dict_respuesta = []
-    legislador = Legislador.query.filter_by(id=_id).first()
-
-    if legislador:
-        dict_respuesta.append(legislador.json_dict())
+    if _id:
+        legislador = Legislador.query.filter_by(id=_id).first()
+        if legislador:
+            dict_respuesta.append(legislador.json_dict())
+    else:
+        legisladores = Legislador.query.all()
+        for l in legisladores:
+            dict_respuesta.append(l.json_dict())
 
     if dict_respuesta:
-        return jsonify(data={'legisladores': dict_respuesta}), 200
+        resp = make_response(jsonify(data={'legisladores': dict_respuesta}), 200)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
     else:
-        return jsonify(data='El Legislador no existe'), 404
+        resp = make_response(jsonify(data={'msg': 'El Legislador no existe'}), 404)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
 
 ###############################################################################
