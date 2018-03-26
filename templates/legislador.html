@@ -2,6 +2,9 @@
 {% from 'components/my_macros.html' import render_noticia %}
 
 {% block page_content %}
+
+    <p id="idLegislador" hidden="hidden">{{ legislador.id }}</p>
+
     <div id="informacionLegislador" class="card text-white bg-light mb-3">
         <div class="card-header pt-4 bg-success">
             <div class="row">

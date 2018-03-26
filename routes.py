@@ -376,6 +376,10 @@ def editar_perfil():
 
 ###############################################################################
 # API
+'''
+    Utiliza flask.make_response() para agregar los headers necesarios para utilizar la API desde otro dominio
+'''
+
 @app.route('/api')
 def mostrar_api():
     return render_template('api.html')
