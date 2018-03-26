@@ -108,20 +108,29 @@
                   Noticias
                 </div>
                 <div class="card-body p-2">
-                    {% if legislador.noticias %}
-                        <div class="card-body bg-transparent p-0 border-0">
-                            <ul class="list-group border-0">
-                                {% for noticia in legislador.noticias %}
-                                <li class="list-group-item p-0 mb-2 border-0">{{ render_noticia(noticia, False, 128) }}</li>
-                                {% endfor %}
-                            </ul>
-                    {% else %}
-                        <div class="card-body bg-transparent">
-                        <p>No hay noticias de este legislador.</p>
-                    {% endif %}
+                    <div class="card-body bg-transparent p-0 border-0">
+                        <ul id="listaNoticias" class="list-group border-0">
+                        </ul>
                 </div>
                 </div>
               </div>
         </div>
     </div>
+
+    <!-- AJAX Stuff -->
+    <script>
+        // Noticias
+        // Carga Inicial
+        $(function () {
+            $.getJSON("{{ url_for("ajax_legislador_noticias", id=legislador.id)}}", function (jd) {
+                for (var noticia of jd) {
+                    $("#listaNoticias").append("<li>")
+                        .append("<p> Titulo: " + noticia.label + " </p>")
+                        .append("<p> Id: " + noticia.value + " </p>")
+                        .append("<p> Contenido: " + noticia.contenido + " </p>");
+                }
+            });
+        });
+    </script>
+
 {% endblock %}

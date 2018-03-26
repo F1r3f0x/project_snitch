@@ -162,7 +162,8 @@ def mostrar_legislador(id_legislador):
                                        )
             else:
                 app.logger.info(f'{datetime.now()}: Legislador {legislador} no tiene cargos!!.')
-                return 'Este legislador esta mal registrado, contacte al administrador (plabin@outlook.cl)'
+                return 'Este legislador esta mal registrado, contacte al administrador (plabin@outlook.cl)',\
+                       HTTP_INTERNAL_SERVER_ERROR
         else:
             return abort(HTTP_INTERNAL_SERVER_ERROR)
 
@@ -375,10 +376,10 @@ def editar_perfil():
 
 
 ###############################################################################
-# API
-'''
+"""
+    API
     Utiliza flask.make_response() para agregar los headers necesarios para utilizar la API desde otro dominio
-'''
+"""
 
 @app.route('/api')
 def mostrar_api():
@@ -441,11 +442,6 @@ def ajax_legislador_noticias():
 
 
 ###############################################################################
-# Tests
-
-@app.route('/test')
-def funcion_test():
-    return render_template('tests/jquery_tests.html')
 
 # SimpleSearch no necesita index
 # @app.route('/reindex')
