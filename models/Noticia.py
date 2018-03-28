@@ -78,9 +78,9 @@ class Noticia(db.Model, EnviableAJAX):
         ajax_dict = {
             'label': self.titulo,
             'value': self.id,
-            'contenido': self.contenido_texto,
+            'contenido': self.contenido_texto[:127],
             'url': self.url,
-            'fecha': self.fecha,
+            'fecha': str(self.fecha),
             'fuente_noticias': {
                 'nombre': self.fuente.nombre,
                 'id': self.fuente.id
