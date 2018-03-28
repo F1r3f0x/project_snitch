@@ -111,9 +111,14 @@
                     <div class="card-body bg-transparent p-0 border-0">
                         <ul id="listaNoticias" class="list-group border-0">
                         </ul>
-                        <button type="button" name="" id=""
+                        <button type="button" name="btnCargarNoticias" id="btnCargarNoticias"
                                 class="btn btn-primary btn-lg btn-block mt-2">
                             Cargar Mas
+                        </button>
+                        <button type="button" name="btnRetraeNoticias" id="btnRetraeNoticias"
+                                class="btn btn-primary btn-lg btn-block mt-2"
+                                style="display: none">
+                            <i class="fas fa-angle-double-up"></i>
                         </button>
                     </div>
                 </div>
@@ -127,11 +132,16 @@
          * Genera un Card (Bootstrap) con la noticia obtenida por ajax.
          * @author F1r3f0x
          * @param objNoticia
+         * @param hidden
          * @returns {*|jQuery}
          */
-        function getCardNoticia(objNoticia) {
+        function getCardNoticia(objNoticia, hidden) {
             // Crear Card
             let cardNoticia = $("<div></div>").addClass("card p-0 border-4");
+
+            if (hidden) {
+                cardNoticia.hide();
+            }
 
             // Agregar Elementos
             // Link
@@ -170,16 +180,54 @@
         // Noticias
         let paginaNoticias = 1;
 
-        // Noticias - Carga Inicial
+        function getNoticias(pagina) {
+            // Ajax carga de noticias
+            return $.ajax({
+                url: "{{ url_for("ajax_legislador_noticias")}}",
+                type: "GET",
+                data: {"id": {{legislador.id}}, 'pagina': pagina},
+                dataType: "json",
+            });
+        }
+
         $(function () {
-            $.getJSON("{{ url_for("ajax_legislador_noticias", id=legislador.id)}}", function (jd) {
+            let noticiasCarga = getNoticias(paginaNoticias);
+
+            // Noticias - Carga Inicial
+            noticiasCarga.done(function (jd) {
+                let cards = [];
                 for (const noticia of jd) {
-                    let cardNoticia = getCardNoticia(noticia);
-                    cardNoticia.appendTo("#listaNoticias");
+                    let cardNoticia = getCardNoticia(noticia, false);
+                    cards.push(cardNoticia);
                 }
+                $("#listaNoticias").append(cards);
+            });
+
+            // Noticias - Cargar Mas
+            $("#btnCargarNoticias").click(function (event) {
+                paginaNoticias++;
+                noticiasCarga = getNoticias(paginaNoticias);
+
+                noticiasCarga.done(function (jd) {
+                    let cards = [];
+                    for (const noticia of jd) {
+                        let cardNoticia = getCardNoticia(noticia, true);
+                        cards.push(cardNoticia);
+                    }
+                    $("#listaNoticias").append(cards);
+
+                    for (const card of cards) {
+                        card.fadeIn();
+                    }
+                });
+
+                noticiasCarga.fail(function () {
+                    $("#btnCargarNoticias").fadeOut();
+                    $("#btnRetraeNoticias").fadeIn();
+                })
             });
         });
-        // TODO: Boton "Cargar Mas"
+
 
         // TODO: Otro
     </script>
