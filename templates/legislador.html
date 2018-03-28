@@ -203,6 +203,11 @@
                 $("#listaNoticias").append(cards);
             });
 
+            noticiasCarga.fail(function() {
+                $("#listaNoticias").append($("<p></p>").text("Este Legislador no tiene noticias").addClass("p-3"));
+                $("#btnCargarNoticias").hide();
+            });
+
             // Noticias - Cargar Mas
             $("#btnCargarNoticias").click(function (event) {
                 paginaNoticias++;
