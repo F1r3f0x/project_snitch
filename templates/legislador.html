@@ -111,7 +111,11 @@
                     <div class="card-body bg-transparent p-0 border-0">
                         <ul id="listaNoticias" class="list-group border-0">
                         </ul>
-                </div>
+                        <button type="button" name="" id=""
+                                class="btn btn-primary btn-lg btn-block mt-2">
+                            Cargar Mas
+                        </button>
+                    </div>
                 </div>
               </div>
         </div>
@@ -163,10 +167,12 @@
             return cardNoticia;
         }
 
+        // Noticias
+        let paginaNoticias = 1;
+
         // Noticias - Carga Inicial
         $(function () {
             $.getJSON("{{ url_for("ajax_legislador_noticias", id=legislador.id)}}", function (jd) {
-                let i = -1;
                 for (const noticia of jd) {
                     let cardNoticia = getCardNoticia(noticia);
                     cardNoticia.appendTo("#listaNoticias");
@@ -174,6 +180,8 @@
             });
         });
         // TODO: Boton "Cargar Mas"
+
+        // TODO: Otro
     </script>
 
 {% endblock %}
