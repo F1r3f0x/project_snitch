@@ -119,52 +119,57 @@
 
     <!-- AJAX Stuff -->
     <script>
-        // Noticias
-        // Carga Inicial
+        /**
+         * Genera un Card (Bootstrap) con la noticia obtenida por ajax.
+         * @author F1r3f0x
+         * @param objNoticia
+         * @returns {*|jQuery}
+         */
+        function getCardNoticia(objNoticia) {
+            // Crear Card
+            let cardNoticia = $("<div></div>").addClass("card p-0 border-4");
+
+            // Agregar Elementos
+            // Link
+            let linkNoticia = $("<a></a>").attr("href", objNoticia.url);
+            // Titulo
+            let tituloNoticia = $("<h5></h5>").addClass("card-header text-white bg-dark")
+                .append("<u>" + objNoticia.label + "</u>");
+            // Footer Titulo
+            let footerTitulo = $("<div></div>").addClass("card-footer text-muted small")
+                .text(objNoticia.fecha + " | " + objNoticia.fuente_noticias.nombre);
+
+            // Contenido
+            // Div Row
+            let rowContenido = $("<div></div>").addClass("row");
+            // Thumbnail
+            // TODO: imagen de reemplazo
+            let imgContenido = $("<img></img>").addClass("col-lg-4 img-fluid").attr("src","data:").attr("alt", "Imagen Noticia")
+                .attr("src", "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22318%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20318%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_158bd1d28ef%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A16pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_158bd1d28ef%22%3E%3Crect%20width%3D%22318%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22129.359375%22%20y%3D%2297.35%22%3EImage%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+
+            // Div Texto
+            // Div Body
+            let divTexto =  $("<div></div>").addClass("card-body col-lg-7 p-lg-1");
+            // P Resumen
+            let pResumen = $("<p></p>").addClass("card-text small m-0 text-white").text("Resumen:");
+            // P Texto Resumen
+            let pContenido =  $("<p></p>").addClass("card-text text-white").text(objNoticia.contenido + "...");
+
+            divTexto.append([pResumen, pContenido]);
+            rowContenido.append([imgContenido, divTexto]);
+            linkNoticia.append([tituloNoticia, footerTitulo, rowContenido]);
+            cardNoticia.append(linkNoticia);
+
+            return cardNoticia;
+        }
+
+        // Noticias - Carga Inicial
         $(function () {
             $.getJSON("{{ url_for("ajax_legislador_noticias", id=legislador.id)}}", function (jd) {
                 let i = -1;
                 for (const noticia of jd) {
-                    // Crear Card
-                    i++;
-                    const id_item_noticia = "-noticias-" + i.toString();
-                    $("<div></div>").attr("id", "card" + id_item_noticia).addClass("card p-0 border-4").appendTo("#listaNoticias");
-
-
-                    // Agregar Elementos
-
-                    // Link
-                    $("<a></a>").attr("href", noticia.url).attr("id", "link" + id_item_noticia).appendTo("#card" + id_item_noticia);
-                    // Titulo
-                    $("<h5></h5>").addClass("card-header text-white bg-dark")
-                        .append("<u>" + noticia.label + "</u>")
-                        .appendTo("#link" + id_item_noticia);
-                    // Footer Titulo
-                    $("<div></div>").addClass("card-footer text-muted small")
-                        .text(noticia.fecha + " | " + noticia.fuente_noticias.nombre)
-                        .appendTo("#link" + id_item_noticia);
-
-                    // Contenido
-                    // Div Row
-                    $("<div></div>").addClass("row").attr("id", "contenido" + id_item_noticia)
-                        .appendTo("#link" + id_item_noticia);
-                    // Thumbnail
-                    $("<img></img>").addClass("col-lg-4 img-fluid").attr("src","data:").attr("alt", "Imagen Noticia")
-                        .attr("src", "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22318%22%20height%3D%22180%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20318%20180%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_158bd1d28ef%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A16pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_158bd1d28ef%22%3E%3Crect%20width%3D%22318%22%20height%3D%22180%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22129.359375%22%20y%3D%2297.35%22%3EImage%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E")
-                        .appendTo("#contenido" + id_item_noticia);
-
-                    // Div Texto
-                    // Div Body
-                    $("<div></div>").addClass("card-body col-lg-7 p-lg-1").attr("id", "texto" + id_item_noticia)
-                        .appendTo("#contenido" + id_item_noticia);
-                    // P Resumen
-                    $("<p></p>").addClass("card-text small m-0 text-white")
-                        .text("Resumen:")
-                        .appendTo("#texto" + id_item_noticia);
-                    // P Texto Resumen
-                    $("<p></p>").addClass("card-text text-white")
-                        .text(noticia.contenido + "...")
-                        .appendTo("#texto" + id_item_noticia);
+                    let cardNoticia = getCardNoticia(noticia);
+                    cardNoticia.appendTo("#listaNoticias");
                 }
             });
         });
