@@ -48,6 +48,7 @@ ID_TIPO_SENADOR = 1
 ID_TIPO_DIPUTADO = 2
 
 NOTICIAS_POR_PAGINA = 10
+NOTICIAS_PAGINA_AJAX = 3
 
 
 def requiere_admin(fun):
@@ -294,7 +295,8 @@ def logout_usuario():
 @app.route('/lista_noticias')
 def mostrar_lista_noticias():
     pagina = request.args.get('pagina', 1, int)
-    noticias = Noticia.query.order_by(Noticia.fecha.desc()).paginate(pagina, NOTICIAS_POR_PAGINA, True)
+    noticias = Noticia.query.order_by(Noticia.fecha.desc()).\
+        paginate(pagina, NOTICIAS_POR_PAGINA, True)
 
     siguiente_url = url_for('mostrar_lista_noticias',
                             pagina=noticias.next_num) if noticias.has_next else None
@@ -402,11 +404,15 @@ def get_legislador():
             dict_respuesta.append(l.json_dict())
 
     if dict_respuesta:
-        resp = make_response(jsonify(data={'legisladores': dict_respuesta}), 200)
+        resp = make_response(
+            jsonify(data={'legisladores': dict_respuesta}), 200
+        )
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
     else:
-        resp = make_response(jsonify(data={'msg': 'El Legislador no existe'}), 404)
+        resp = make_response(
+            jsonify(data={'msg': 'El Legislador no existe'}), 404
+        )
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
@@ -418,7 +424,9 @@ def ajax_nombres():
     termino = request.args.get('term', None, str).strip().lower()
     if termino:
         legisladores = Legislador.query.msearch(termino)
-        respuesta_json = [{'label': str(_l), 'value': str(_l.id)} for _l in legisladores]
+        respuesta_json = [
+            {'label': str(_l), 'value': str(_l.id)} for _l in legisladores
+        ]
         if respuesta_json:
             return jsonify(data=respuesta_json), 200
 
@@ -430,7 +438,12 @@ def ajax_legislador_noticias():
     noticias = []
     try:
         id = request.args.get('id', 1, int)
-        noticias = Legislador.query.get(id).noticias
+        pagina = request.args.get('pagina', 1, int)
+        noticias = Noticia.query.select_from(Legislador).\
+            join(Legislador.noticias).\
+            filter(Legislador.id == id)\
+            .order_by(Noticia.fecha.desc()).\
+            paginate(pagina, NOTICIAS_PAGINA_AJAX, True).items
     except AttributeError:
         pass
 
