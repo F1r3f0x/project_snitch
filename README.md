@@ -3,7 +3,7 @@ Sistema que obtiene datos sobre los Senadores y Diputados de Chile y luego sinte
 
 Project Snitch es desarrollado con Flask y SQLAlchemy.
 
-Esta siendo alojado en https://plabin.ddns.net/project_snitch
+Esta siendo alojado en <strike>https://plabin.ddns.net/project_snitch</strike> (Migrando a AWS)
 
 Trello Board: https://trello.com/b/0vUCnalk/project-snitch
 
