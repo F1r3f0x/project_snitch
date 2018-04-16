@@ -25,7 +25,6 @@ Trello Board: https://trello.com/b/0vUCnalk/project-snitch
 ![diagrama db](/design/diagrama_db.png)
   
 ## Como ejecutar el proyecto:
-  - Extraer a "/project_snitch"
   - Crear base de datos y llenar con scripts en "/design"
   - Setear variables de entorno
     + SNITCH_DB_HOST: Host de DB
@@ -36,9 +35,9 @@ Trello Board: https://trello.com/b/0vUCnalk/project-snitch
     + SNITCH_DB_SECRET_KEY: Secret Key para Flask.
     + SNITCH_RECAPTCHA_PUBLIC_KEY: Clave publica de Recaptcha
     + SNITCH_RECAPTCHA_PRIVATE_KEY: Clave privada de Recaptcha
-  - Ejecutar wsgi.py 
+  - Ejecutar debug.py 
   
-        python wsgi.py
+        python debug.py
 
 ## Estructura JSONs
 
