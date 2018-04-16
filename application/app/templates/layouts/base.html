@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="Flask App Test">
+    <meta name="author" content="F1r3f0x">
+
+    {% if titulo %}
+        <title>Project Snitch - {{ titulo }}</title>
+	{% else %}
+	    <title>Project Snitch</title>
+    {% endif %}
+
+    <!-- jQuery UI -->
+    <link href="{{ url_for('static',filename='css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='css/jquery-ui.structure.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static',filename='static/css/jquery-ui.structure.min.css') }}" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+    <script src="{{ url_for('static', filename='js/fontawesome-all.js') }}"></script>
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static',filename='js/jquery-3.2.1.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+
+    <!-- Bootstrap -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    <!-- My Styles --->
+    <link href="{{ url_for('static',filename='css/custom/jqueryui_custom.css') }}" rel="stylesheet" type="text/css">
+
+</head>
+
+<style>
+    body {
+        {#margin-top: 80px;#}
+        word-wrap: break-word;
+        min-height: 100vh;
+    }
+</style>
+
+<body class="d-flex flex-column">
+	<!-- Navbar -->
+    <nav class="navbar navbar-expand-xl navbar-dark
+    {% if current_user.is_authenticated %}
+        {% if current_user.is_admin() %}
+            bg-danger
+        {% endif %}
+        bg-primary
+    {% else %}
+        bg-primary
+    {% endif %}
+    sticky-top mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}"><i class="fas fa-user-secret"></i> Project Snitch</a>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#topNavBar" aria-controls="topNavBar" aria-expanded="false" aria-label="Toggle navigation" style="">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse" id="topNavBar" style="">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('lista_legisladores') }}">Legisladores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('mostrar_lista_noticias') }}">Noticias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#">Votaciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('mostrar_api') }}">API</a>
+                    </li>
+                </ul>
+
+                {% if barra_busqueda %}
+                    <hr>
+                    <form id="barra_busqueda_form" class="form-inline my-2 my-lg-0" role="search" action="{{ url_for('buscar') }}" method="get" onsubmit="return false">
+                            <input id="buscar_barra" type="text" class="form-control mr-sm-2" placeholder="Buscar..." name="buscar_barra">
+                            <button id="barra_busqueda_btn" class="btn btn-secondary my-2 my-sm-0">Buscar</button>
+                        <script>
+                           // Autocomplete
+                            $(function () {
+                                $("#buscar_barra").autocomplete({
+                                    source: function (request, response) {
+                                        $.ajax({
+                                            url:"{{ url_for("ajax_nombres") }}",
+                                            dataType:"json",
+                                            data: {
+                                                term: request.term
+                                            },
+                                            success: function (data) {
+                                                response(data.data);
+                                            }
+                                        });
+                                    },
+                                    minLenght: 3,
+                                    focus: function (event, ui) {
+                                        $("#buscar_barra").val(ui.item.label);
+                                        return false;
+                                    },
+                                    select: function (event, ui) {
+                                        event.preventDefault();
+                                        $("#buscar_barra").val(ui.item.label);
+                                        window.location.href = "{{ url_for('home')}}" + "legislador/" + ui.item.value;
+                                        return false;
+                                    }
+                                }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+                                    ul.addClass("dropdown-menu");
+                                    ul.css('z-index', 9999);
+                                    return $( "<li class='dropdown-item'>" )
+                                    .append(item.label)
+                                    .appendTo( ul );
+                                };
+                            });
+
+                            // Search Bar Script
+                            var form_barra = document.getElementById("barra_busqueda_form");
+
+                            var buscar_barra = document.getElementById("buscar_barra");
+                            var buscar_btn = document.getElementById("barra_busqueda_btn");
+
+                            buscar_barra.addEventListener("keypress", buscarLegisladorBarra);
+                            buscar_btn.addEventListener("click", buscarLegisladorBarra);
+
+                            function buscarLegisladorBarra(ev){
+                                if (ev.keyCode === 13 || ev.type === "click") {
+                                    form_barra.submit();
+                                }
+                            }
+                        </script>
+                    </form>
+                {% endif %}
+            
+                <hr>
+
+                <ul class="navbar-nav ml-xl-3 ml-lg-0">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i> {{ current_user.nombre }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ url_for('mostrar_perfil') }}">Mi Perfil</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" title="Salir" href="{{ url_for('logout_usuario') }}"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                        </div>
+                    </li>
+                    {% if current_user.is_admin() %}
+                        <li class="nav-item"><a class="nav-link" title="Admin" href="{{ url_for('admin.index') }}"><i class="fas fa-cogs"></i>  Admin</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login_usuario') }}"><i class="fa fa-sign-in-alt"></i> Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('registrar_usuario') }}"><i class="fa fa-user-plus"></i> Registrarse</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="container" role="main" style="flex: 1;">
+        {% include 'components/_messages.html' %}
+        {% block page_content %}
+        {% endblock %}
+    </main>
+
+    <!-- /.container -->
+     <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 float-left">
+                    <p>Patricio Labin<br>plabin@outlook.cl</p>
+                </div>
+                <div class="col-6 float-right">
+                    <p class="text-right">
+                        <a href="https://github.com/F1r3f0x/project_snitch">Fork Me on Github! <i class="fab fa-github"></i></a><br>
+                        <a href="http://getbootstrap.com/">Created with Bootstrap 4</a><br>
+                        <a href="https://bootswatch.com/darkly/">Darkly Theme</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+     </footer>
+
+    {% block page_script %}
+    {% endblock %}
+</body>
+
+</html>

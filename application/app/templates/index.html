@@ -1,0 +1,73 @@
+{%extends 'layouts/base.html' %}
+
+{% block page_content %}
+<div class="jumbotron py-lg-5 py-sm-3">
+    <h2 class="text-center">Project Snitch</h2>
+    <div class="form-group mt-sm-4">
+        <form action="{{ url_for('buscar') }}" method="get" role="form" id="form" onsubmit="return false;">
+                <input type="text" class="form-control" name="buscar" id="buscar"
+                       placeholder="Buscar Senador o Diputado">
+        </form>
+    </div>
+
+    <div id="changelog" class="container-fluid mt-5 p-0">
+        <h1>Changelog:</h1>
+        <ul class="list-group">
+            {% for parrafo in changelog %}
+                <li class="list-group-item">{{ parrafo }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+    <script>
+        // Autocomplete
+        $(function () {
+            $("#buscar").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url:"{{ url_for("ajax_nombres") }}",
+                        dataType:"json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response(data.data);
+                        }
+                    });
+                },
+                minLenght: 3,
+                focus: function (event, ui) {
+                    $("#buscar").val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#buscar").val(ui.item.label);
+                    window.location.href = "{{ url_for('home')}}" + "legislador/" + ui.item.value;
+                    return false;
+                }
+            }).autocomplete( "instance" )._renderItem = function( ul, item ) {
+                ul.addClass("dropdown-menu");
+                return $( "<li class='dropdown-item'>" )
+                .append(item.label)
+                .appendTo( ul );
+            };
+        });
+
+        // Search
+        var form = document.getElementById("form");
+
+        var buscar = document.getElementById("buscar");
+        buscar.addEventListener("keypress", buscarLegislador);
+
+        function buscarLegislador(ev){
+            if (ev.keyCode === 13) {
+                form.submit();
+            }
+        }
+    </script>
+
+{% endblock %}
