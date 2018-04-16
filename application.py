@@ -2,6 +2,8 @@
     Punto de Entrada (Debug)
 """
 import sys
+
+sys.path.extend(['../'])
 print(sys.path)
 
 from app import app, routes, admin_views
