@@ -13,19 +13,16 @@ from flask_msearch import Search
 from app.config import Config
 _config = Config()
 
-# Lee credenciales desde archivo
-lineas = ''
-with open('../credenciales.txt') as _f:
-    lineas = _f.readlines()
-
-_config.DB_HOST = lineas[0].strip()
-_config.DB_PORT = lineas[1].strip()
-_config.DB_NAME = lineas[2].strip()
-_config.DB_USER = lineas[3].strip()
-_config.DB_PASS = lineas[4].strip()
-_config.SECRET_KEY = lineas[5].strip()
-_config.RECAPTCHA_PUBLIC_KEY = lineas[6].strip()
-_config.RECAPTCHA_PRIVATE_KEY = lineas[7].strip()
+# Lee credenciales desde variables de entorno
+from os import environ
+_config.DB_HOST = environ.get('SNITCH_DB_HOST')
+_config.DB_PORT = environ.get('SNITCH_DB_PORT')
+_config.DB_NAME = environ.get('SNITCH_DB_NAME')
+_config.DB_USER = environ.get('SNITCH_DB_USER')
+_config.DB_PASS = environ.get('SNITCH_DB_PASS')
+_config.SECRET_KEY = environ.get('SNITCH_SECRET_KEY')
+_config.RECAPTCHA_PUBLIC_KEY = environ.get('SNITCH_RECAPTCHA_PUBLIC_KEY')
+_config.RECAPTCHA_PRIVATE_KEY = environ.get('SNITCH_RECAPTCHA_PRIVATE_KEY')
 _config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@{_config.DB_HOST}:{_config.DB_PORT}/{_config.DB_NAME}'
 
 # Flask App
