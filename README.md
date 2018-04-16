@@ -8,7 +8,7 @@ Esta siendo alojado en http://project-snitch.us-east-2.elasticbeanstalk.com/
 Trello Board: https://trello.com/b/0vUCnalk/project-snitch
 
 ## Mapa de Proyecto
-+ ### app
++ ### application
     Applicacion web.
 + ### datos:
     Datos obtenidos al hacer scrapping (para desarrollo).
