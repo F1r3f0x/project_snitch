@@ -1,6 +1,9 @@
 """
     Punto de Entrada (Debug)
 """
+import sys
+print(sys.path)
+
 from app import app, routes, admin_views
 
 if __name__ == "__main__":
