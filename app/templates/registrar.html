@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+{% from 'components/_formhelpers.html' import render_field %}
+
+{% block page_content %}
+    <div class="jumbotron py-4">
+        <form action="" method="POST" role="form">
+            <legend>Registrarse:</legend>
+
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ render_field(form.nombre, class="form-control")}}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.email, class="form-control")}}
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                {{ render_field(form.password, class="form-control")}}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.confirm, class="form-control")}}
+            </div>
+
+            {% if not debug%}
+                <hr>
+
+                <div class="form-group">
+                    {{ render_field(form.recaptcha, class="form-control")}}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success">Ok</button>
+        </form>
+    </div>
+{% endblock %}

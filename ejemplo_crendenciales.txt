@@ -1,7 +1,0 @@
-example.net
-3306
-user
-password
-21'0398210'321
-'210943'32094'03294
-sdjlkasdjalskjdkla

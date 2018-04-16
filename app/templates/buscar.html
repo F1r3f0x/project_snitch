@@ -1,0 +1,30 @@
+{%extends 'layouts/base.html' %}
+
+{% block page_content %}
+    <h1 class="py-4">Buscar "{{ busqueda }}"</h1>
+    {% if results %}
+    <ol class="list-group">
+        {% for r in results %}
+            <li>
+                <div class="card text-white bg-light mb-3">
+                    <div class="card-header pt-4 bg-success">
+                        <a href="{{ url_for('mostrar_legislador', id_legislador = r.legislador.id)}}">
+                            <h3 class="card-title text-white">{{ r.legislador.primer_nombre }} {{ r.legislador.primer_apellido }}</h3>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="float-left">
+                        <p><b>Cargo Actual:</b> {{ r.ultimo_cargo.tipo.nombre }} ({{ r.ultimo_cargo.periodo.anno_inicio }} - {{ r.ultimo_cargo.periodo.anno_fin }}) </p>
+                        <p><b>Partido:</b> {{ r.ultimo_cargo.partido.nombre }}</p>
+                        </div>
+                        <img class="float-right" style="height: 80px; width: 80px" src="{{ url_for('static', filename='img/profile.png') }}" alt="">
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <h2>No se encontraron resultados...</h2>
+    {% endif %}
+
+{% endblock %}
