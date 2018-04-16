@@ -3,7 +3,7 @@
 """
 import sys
 
-sys.path.extend(['../'])
+sys.path.extend(['/opt/python/current'])
 print(sys.path)
 
 from app import app, routes, admin_views
