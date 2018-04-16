@@ -9,6 +9,9 @@ from flask_admin import Admin
 from flask_htmlmin import HTMLMIN
 from flask_msearch import Search
 
+# Flask App
+app = Flask(__name__)
+
 # Configs
 from app.config import Config
 _config = Config()
@@ -25,8 +28,11 @@ _config.RECAPTCHA_PUBLIC_KEY = environ.get('SNITCH_RECAPTCHA_PUBLIC_KEY')
 _config.RECAPTCHA_PRIVATE_KEY = environ.get('SNITCH_RECAPTCHA_PRIVATE_KEY')
 _config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@{_config.DB_HOST}:{_config.DB_PORT}/{_config.DB_NAME}'
 
-# Flask App
-app = Flask(__name__)
+if app.config['DEBUG']:
+    _config.DEBUG = True
+else:
+    _config.DEBUG = False
+
 app.config.from_object(_config)
 
 db = SQLAlchemy(app)
