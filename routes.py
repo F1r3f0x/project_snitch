@@ -18,25 +18,25 @@ from sqlalchemy.exc import OperationalError, IntegrityError
 
 from werkzeug.routing import BuildError
 
-from project_snitch.forms import UserRegisterForm, UserLoginForm, UserSubscribeForm
-from project_snitch.forms import UserUnsubscribeForm, UserChangeProfile
+from app.forms import UserRegisterForm, UserLoginForm, UserSubscribeForm
+from app.forms import UserUnsubscribeForm, UserChangeProfile
 
-from project_snitch.models import Legislador
-from project_snitch.models import EstadoNoticioso
-from project_snitch.models import CargoLegislativo
-from project_snitch.models import PartidoPolitico
-from project_snitch.models import Region
-from project_snitch.models import TipoLegislador
-from project_snitch.models import Periodo
-from project_snitch.models import Distrito
-from project_snitch.models import Circunscripcion
-from project_snitch.models import TipoUsuario
-from project_snitch.models import Usuario
-from project_snitch.models import Noticia, FuenteNoticias
+from app.models import Legislador
+from app.models import EstadoNoticioso
+from app.models import CargoLegislativo
+from app.models import PartidoPolitico
+from app.models import Region
+from app.models import TipoLegislador
+from app.models import Periodo
+from app.models import Distrito
+from app.models import Circunscripcion
+from app.models import TipoUsuario
+from app.models import Usuario
+from app.models import Noticia, FuenteNoticias
 
-from project_snitch import app, db, login, searcher#, whooshee
-from project_snitch import my_utils
-from project_snitch.my_tools import funciones as tools
+from app import app, db, login, searcher#, whooshee
+from app import my_utils
+from app.my_tools import funciones as tools
 
 HTTP_BAD_REQUEST = 400
 HTTP_UNAUTHORIZED = 401

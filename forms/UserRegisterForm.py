@@ -1,5 +1,5 @@
-from project_snitch.models import Usuario
-from project_snitch import app
+from app.models import Usuario
+from app import app
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, validators
 

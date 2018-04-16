@@ -1,4 +1,4 @@
-from project_snitch import db
+from app import db
 
 
 class PartidoPolitico(db.Model):

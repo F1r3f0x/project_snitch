@@ -6,8 +6,8 @@ from flask_admin.form import SecureForm
 from flask_login import current_user
 from flask import flash, redirect, url_for
 from wtforms import PasswordField
-from project_snitch import admin, db, login
-from project_snitch import models
+from app import admin, db, login
+from app import models
 
 
 class BaseAdminView(ModelView):

@@ -1,7 +1,7 @@
 from datetime import datetime
-from project_snitch import db, ID_SENADOR
-import project_snitch.my_tools.funciones as tools
-from project_snitch.models.utilitaria.EnviableJSON import EnviableJSON
+from app import db, ID_SENADOR
+import app.my_tools.funciones as tools
+from app.models.utilitaria.EnviableJSON import EnviableJSON
 
 noticias_legislador = db.Table(
     'noticia_legislador',

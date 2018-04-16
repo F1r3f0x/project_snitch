@@ -1,6 +1,6 @@
 from datetime import datetime
-from project_snitch import db
-import project_snitch.my_tools.funciones as tools
+from app import db
+import app.my_tools.funciones as tools
 
 tabla_autores_proyecto = db.Table(
     'autores_proyecto',

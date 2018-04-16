@@ -6,9 +6,9 @@
 import json
 from datetime import datetime
 from sqlalchemy import exc
-from project_snitch.sistema.scrappers.senadores import get_lista_senadores
-from project_snitch.sistema.scrappers.diputados import get_lista_diputados
-from project_snitch import models, db
+from app.sistema.scrappers.senadores import get_lista_senadores
+from app.sistema.scrappers.diputados import get_lista_diputados
+from app import models, db
 
 # Variables
 ID_TIPO_SENADOR = 1

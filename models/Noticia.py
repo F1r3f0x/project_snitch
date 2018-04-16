@@ -1,8 +1,8 @@
 from datetime import datetime
 import sqlalchemy.dialects.mysql as mysql
-from project_snitch import db
-from project_snitch.models.utilitaria.EnviableAJAX import EnviableAJAX
-import project_snitch.my_tools.funciones as tools
+from app import db
+from app.models.utilitaria.EnviableAJAX import EnviableAJAX
+import app.my_tools.funciones as tools
 
 
 class Noticia(db.Model, EnviableAJAX):

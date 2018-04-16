@@ -1,7 +1,7 @@
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin  # Agrega a la clase metodos necesarios para flask_login
-from project_snitch import db, ID_ADMIN, ID_USER, ID_EDITOR
+from app import db, ID_ADMIN, ID_USER, ID_EDITOR
 
 favorito = db.Table(
     'favorito',

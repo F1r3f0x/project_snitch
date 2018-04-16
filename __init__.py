@@ -10,7 +10,7 @@ from flask_htmlmin import HTMLMIN
 from flask_msearch import Search
 
 # Configs
-from project_snitch.config import Config
+from app.config import Config
 _config = Config()
 
 # Lee credenciales desde archivo

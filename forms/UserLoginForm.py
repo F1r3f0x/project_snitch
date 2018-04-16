@@ -1,4 +1,4 @@
-from project_snitch import app
+from app import app
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, validators
 

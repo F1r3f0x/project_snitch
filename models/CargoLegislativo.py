@@ -1,4 +1,4 @@
-from project_snitch import db
+from app import db
 from datetime import datetime
 
 cargo_distritos = db.Table(

@@ -1,4 +1,4 @@
-from project_snitch import db
+from app import db
 
 
 class Region(db.Model):

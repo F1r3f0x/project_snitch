@@ -1,5 +1,5 @@
 from datetime import datetime
-from project_snitch import db
+from app import db
 
 lista_asistencia = db.Table(
     'lista_asistencia',
