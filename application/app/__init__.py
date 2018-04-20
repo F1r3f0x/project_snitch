@@ -28,6 +28,8 @@ _config.RECAPTCHA_PUBLIC_KEY = environ.get('SNITCH_RECAPTCHA_PUBLIC_KEY')
 _config.RECAPTCHA_PRIVATE_KEY = environ.get('SNITCH_RECAPTCHA_PRIVATE_KEY')
 _config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@{_config.DB_HOST}:{_config.DB_PORT}/{_config.DB_NAME}'
 
+print(_config.SQLALCHEMY_DATABASE_URI)
+
 if app.config['DEBUG']:
     _config.DEBUG = True
 else:

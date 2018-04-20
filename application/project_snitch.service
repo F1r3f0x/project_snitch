@@ -1,0 +1,21 @@
+# Systemd unit service file for project_snitch
+# F1r3f0x - 2018
+# This files goes /etc/systemd/system to create your systemd service.
+
+[Unit]
+Description=uWSGI instance to serve Project Snitch
+After=network.target
+
+[Service]
+# Pls don't do this. This is temporary.
+# You should always create a "www-data" user:group that only has ownership of the files to serve.
+User=ubuntu
+Group=ubuntu
+
+# Set directories for your environment
+WorkingDirectory=/home/ubuntu/project_snitch/project_snitch/application
+Environment="PATH=/home/ubuntu/project_snitch/flask_env/bin"
+ExecStart=/home/ubuntu/project_snitch/flask_env/bin/uwsgi --ini project_snitch.ini
+
+[Install]
+WantedBy=multi-user.target
