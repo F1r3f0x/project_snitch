@@ -32,7 +32,7 @@ Trello Board: https://trello.com/b/0vUCnalk/project-snitch
     + SNITCH_DB_NAME: Nombre de DB
     + SNITCH_DB_USER: Usuario de DB
     + SNITCH_DB_PASS: Contraseña de DB
-    + SNITCH_DB_SECRET_KEY: Secret Key para Flask.
+    + SNITCH_SECRET_KEY: Secret Key para Flask.
     + SNITCH_RECAPTCHA_PUBLIC_KEY: Clave publica de Recaptcha
     + SNITCH_RECAPTCHA_PRIVATE_KEY: Clave privada de Recaptcha
   - Ejecutar debug.py 
