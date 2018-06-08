@@ -8,8 +8,8 @@ import traceback
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
-from project_snitch.noticias.scrappers import ScrapperNoticias
-from project_snitch.noticias import logger
+from noticias.scrappers import ScrapperNoticias
+from noticias import logger
 
 
 class ScrapperRBB(ScrapperNoticias):

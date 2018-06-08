@@ -5,10 +5,10 @@
 """
 from datetime import datetime, timedelta
 from time import sleep
-from project_snitch.noticias.scrappers import ScrapperRBB
-from project_snitch.noticias import db, Noticia, Legislador, FuenteNoticias
-from project_snitch.noticias import logger
-from project_snitch.my_tools.funciones import buscar_nombres_texto
+from noticias.scrappers import ScrapperRBB
+from noticias import db, Noticia, Legislador, FuenteNoticias
+from noticias import logger
+from application.app.my_tools.funciones import buscar_nombres_texto
 
 NOMBRE = 'biobiochile.cl'
 URL = 'http://www.biobiochile.cl/'
