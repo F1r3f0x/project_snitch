@@ -5,21 +5,18 @@ Project Snitch es desarrollado con Flask y SQLAlchemy.
 
 Esta siendo alojado en https://projectsnitch.ddns.net
 
-Trello Board: https://trello.com/b/0vUCnalk/project-snitch
-
 ## Mapa de Proyecto
-+ ### application
++ ###application
     Applicacion web.
-+ ### datos:
++ ###datos:
     Datos obtenidos al hacer scrapping (para desarrollo).
-+ ### noticias:
++ ###noticias:
     Scripts para extraer y subir noticias al sistema.
-+ ### sistema:
++ ###sistema:
     Scripts para subir y mantener la informacion del sistema
     
 ## Dependencias
 + Python 3.6.5
-+ MariaDB 10.2.12
   
 ## Diagrama DB
 ![diagrama db](/design/diagrama_db.png)
