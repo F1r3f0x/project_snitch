@@ -6,13 +6,13 @@ Project Snitch es desarrollado con Flask y SQLAlchemy.
 Esta siendo alojado en https://projectsnitch.ddns.net
 
 ## Mapa de Proyecto
-+ ###application
++ Application:
     Applicacion web.
-+ ###datos:
++ Datos:
     Datos obtenidos al hacer scrapping (para desarrollo).
-+ ###noticias:
++ Noticias:
     Scripts para extraer y subir noticias al sistema.
-+ ###sistema:
++ Sistema:
     Scripts para subir y mantener la informacion del sistema
     
 ## Dependencias
