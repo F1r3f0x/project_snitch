@@ -6,8 +6,8 @@
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from project_snitch.noticias.scrappers import ScrapperNoticias
-from project_snitch.noticias import logger
+from noticias.scrappers import ScrapperNoticias
+from noticias import logger
 
 
 class ScrapperLaTercera (ScrapperNoticias):
