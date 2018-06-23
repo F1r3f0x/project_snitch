@@ -40,7 +40,7 @@ class CargoLegislativo(db.Model):
     __tablename__ = 'cargo_legislativo'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    legislador_id = db.Column(db.String(256), db.ForeignKey('legislador.id'),
+    legislador_id = db.Column(db.Integer, db.ForeignKey('legislador.id'),
                               nullable=False, default=1)
     remuneracion = db.Column(db.Integer, nullable=True)
     tipo_legislador_id = db.Column(db.Integer,

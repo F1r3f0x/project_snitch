@@ -9,11 +9,10 @@ class Config(object):
     DB_USER = 'user'
     DB_PASS = 'pass'
     DB_NAME = 'db_name'
-
-    DEBUG = True
-
     SQLALCHEMY_DATABASE_URI = f'mysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    DEBUG = True
 
     CHANGELOG_DIR = 'changelog.txt'
 
