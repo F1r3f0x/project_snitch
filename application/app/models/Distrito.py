@@ -16,7 +16,7 @@ class Distrito(db.Model):
 
     __tablename__ = 'distrito'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     numero = db.Column(db.Integer, nullable=False)
     antiguo = db.Column(db.Boolean, nullable=False)
     activo = db.Column(db.Boolean, nullable=False, default=True)

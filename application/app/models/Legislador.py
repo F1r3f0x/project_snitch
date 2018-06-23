@@ -56,11 +56,15 @@ class Legislador(db.Model, EnviableJSON):
     estado_noticioso_id = db.Column(db.Integer,
                                     db.ForeignKey('estado_noticioso.id'),
                                     nullable=True)
-    ultimo_tipo_legislador_id = db.Column(db.Integer, nullable=True)
+    # Agregar setter
+    ultimo_tipo_legislador_id = db.Column(db.Integer,
+                                          db.ForeignKey('tipo_legislador.id'),
+                                          nullable=False)
     fecha_ingreso = db.Column(db.DateTime, nullable=False,
                               default=datetime.now())
     activo = db.Column(db.Boolean, nullable=False, default=True)
 
+    ultimo_tipo_legislador = db.relationship('TipoLegislador')
     estado_noticioso = db.relationship('EstadoNoticioso',
                                        backref='legisladores')
     noticias = db.relationship('Noticia', secondary=noticias_legislador,
