@@ -3,9 +3,11 @@ from datetime import datetime
 
 cargo_distritos = db.Table(
     'distrito_cargo_legislativo',
+    db.Column('distrito_id', db.Integer,
+              db.ForeignKey('distrito.id'),
+              primary_key=True),
     db.Column('cargo_legislativo_id', db.Integer,
-              db.ForeignKey('cargo_legislativo.id'), primary_key=True),
-    db.Column('distrito_id', db.Integer, db.ForeignKey('distrito.id'),
+              db.ForeignKey('cargo_legislativo.id'),
               primary_key=True)
 )
 
@@ -24,6 +26,7 @@ class CargoLegislativo(db.Model):
         region_id (int): Id de la región en la que se asume el cargo.
         circunscripcion_id (int): Id del a circunscripción en la que se asume el cargo (opcional)
         id_interna (int): Id del legislador en el sistema interno correspondiente (Senado o Camara de Diputados).
+        fecha_ingreso (datetime): Fecha de ingreso del cargo al sistema.
         actvio (bool): Esta activo en el sistema?.
 
         legislador (Legislador): Legislador al que le pertenece el cargo.
@@ -42,7 +45,7 @@ class CargoLegislativo(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     legislador_id = db.Column(db.Integer, db.ForeignKey('legislador.id'),
                               nullable=False, default=1)
-    remuneracion = db.Column(db.Integer, nullable=True)
+    remuneracion = db.Column(db.Float, nullable=True)
     tipo_legislador_id = db.Column(db.Integer,
                                    db.ForeignKey('tipo_legislador.id'),
                                    nullable=False, default=1)
@@ -57,7 +60,7 @@ class CargoLegislativo(db.Model):
                                    db.ForeignKey('circunscripcion.id'),
                                    nullable=True)
     id_interna = db.Column(db.Integer, nullable=True)
-    fecha_ingreso = db.Column(db.Integer, nullable=False,
+    fecha_ingreso = db.Column(db.DateTime, nullable=False,
                               default=datetime.now())
     activo = db.Column('activo', db.Boolean, nullable=False, default=True)
 

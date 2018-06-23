@@ -1,5 +1,4 @@
 from datetime import datetime
-import sqlalchemy.dialects.mysql as mysql
 from app import db
 from app.models.utilitaria.EnviableAJAX import EnviableAJAX
 import app.my_tools.funciones as tools
@@ -27,14 +26,14 @@ class Noticia(db.Model, EnviableAJAX):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     titulo = db.Column(db.String(256), nullable=False)
-    contenido_texto = db.Column(mysql.MEDIUMTEXT(unicode=True), nullable=True)
+    contenido_texto = db.Column(db.UnicodeText, nullable=True)
     url = db.Column(db.String(1024), nullable=False)
     preview_url = db.Column(db.String(1024), nullable=True)
     titulo_buscable = db.Column(db.String(256), nullable=True)
     fecha = db.Column(db.DateTime, nullable=False, default=datetime.now())
     fuente_noticias_id = db.Column(db.Integer,
                                    db.ForeignKey('fuente_noticias.id'),
-                                   default=1, primary_key=True)
+                                   default=1)
     activo = db.Column(db.Boolean, nullable=False, default=True)
 
     def __init__(self,

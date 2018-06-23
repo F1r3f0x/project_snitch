@@ -11,6 +11,15 @@ favorito = db.Table(
     db.Column('fecha', db.DateTime, nullable=False, default=datetime.now())
 )
 
+proyecto_siguiendo = db.Table(
+    'proyecto_siguiendo',
+    db.Column('proyecto_ley_id', db.Integer,
+              db.ForeignKey('proyecto_ley.id'), primary_key=True),
+    db.Column('usuario_id', db.Integer,
+              db.ForeignKey('usuario.id'), primary_key=True),
+    db.Column('fecha', db.DateTime, default=datetime.now())
+)
+
 
 class Usuario(db.Model, UserMixin):
     """
@@ -31,14 +40,13 @@ class Usuario(db.Model, UserMixin):
     __tablename__ = 'usuario'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tipo_usuario_id = db.Column(db.Integer, db.ForeignKey('tipo_usuario.id'), nullable=False)
     nombre = db.Column(db.String(256), nullable=False, unique=True)
     email = db.Column(db.String(256), nullable=False, unique=True)
+    password_hash = db.Column(db.String(4096), nullable=False)
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.now())
     fecha_confirmacion = db.Column(db.DateTime, nullable=True)
-    password_hash = db.Column(db.String(4096), nullable=False)
     activo = db.Column(db.Boolean, nullable=False, default=True)
-
-    tipo_usuario_id = db.Column(db.Integer, db.ForeignKey('tipo_usuario.id'))
 
     tipo = db.relationship('TipoUsuario', backref='usuarios', lazy=True)
     favoritos = db.relationship('Legislador',
@@ -61,6 +69,7 @@ class Usuario(db.Model, UserMixin):
 
         Keyword Args:
             favoritos (list[Legislador]): Lista de Favoritos del Usuario
+            proyectos (list[ProyectoLey]): Lista de Proyectos de ley que sigue el Usuario.
         """
         super(Usuario, self).__init__(**kwargs)
 
@@ -72,6 +81,10 @@ class Usuario(db.Model, UserMixin):
         favoritos = kwargs.get('favoritos')
         if favoritos:
             self.favoritos = kwargs.get('favoritos')
+
+        proyectos = kwargs.get('proyectos')
+        if proyectos:
+            self.proyectos = kwargs.get('proyectos')
 
     def is_admin(self):
         return self.tipo_usuario_id == ID_ADMIN
