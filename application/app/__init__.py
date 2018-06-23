@@ -4,10 +4,10 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from flask_whooshee import Whooshee
 from flask_admin import Admin
 from flask_htmlmin import HTMLMIN
 from flask_msearch import Search
+from flask_migrate import Migrate
 
 # Flask App
 app = Flask(__name__)
@@ -28,7 +28,7 @@ _config.RECAPTCHA_PUBLIC_KEY = environ.get('SNITCH_RECAPTCHA_PUBLIC_KEY')
 _config.RECAPTCHA_PRIVATE_KEY = environ.get('SNITCH_RECAPTCHA_PRIVATE_KEY')
 _config.SQLALCHEMY_DATABASE_URI = f'mysql://{_config.DB_USER}:{_config.DB_PASS}@{_config.DB_HOST}:{_config.DB_PORT}/{_config.DB_NAME}'
 
-if app.config['DEBUG']:
+if environ.get('FLASK_ENV') == 'development':
     _config.DEBUG = True
 else:
     _config.DEBUG = False
@@ -36,6 +36,7 @@ else:
 app.config.from_object(_config)
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 searcher = Search(app)
 
