@@ -1,4 +1,4 @@
-{% macro render_noticia(noticia, mostrar_legisladores, chars_to_render) %}
+    {% macro render_noticia(noticia, mostrar_legisladores, chars_to_render) %}
     <div class="card p-0 border-4">
         <a href="{{ noticia.url }}">
             <h5 class="card-header text-white bg-dark"><u>{{ noticia.titulo }}</u></h5>
@@ -40,4 +40,14 @@
             </div>
         {% endif %}
     </div>
+{% endmacro %}
+
+{% macro render_mensaje(mensaje) %}
+<div class="card mb-2">
+    <div class="card-body">
+        <h4 id="titulo" class="card-title mb-0">{{ mensaje.titulo }}</h4>
+        <p><span id="datos" class="badge badge-primary m-0">{{ mensaje.fecha }} - {{ mensaje.autor.nombre }}</span></p>
+        <p id="contenido"class="card-text">{{ mensaje.contenido }}</p>
+    </div>
+</div>
 {% endmacro %}

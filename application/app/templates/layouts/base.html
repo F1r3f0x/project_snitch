@@ -152,7 +152,7 @@
                         </div>
                     </li>
                     {% if current_user.is_admin() %}
-                        <li class="nav-item"><a class="nav-link" title="Admin" href="{{ url_for('admin.index') }}"><i class="fas fa-cogs"></i>  Admin</a></li>
+                        <li class="nav-item"><a class="nav-link" title="Panel de Administración" href="{{ url_for('admin.index') }}"><i class="fas fa-cogs"></i>  Panel de Administración</a></li>
                     {% endif %}
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('login_usuario') }}"><i class="fa fa-sign-in-alt"></i> Login</a></li>
