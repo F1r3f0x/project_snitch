@@ -22,7 +22,16 @@ Esta siendo alojado en https://projectsnitch.ddns.net
 ![diagrama db](/design/diagrama_db.png)
   
 ## Como ejecutar el proyecto:
-  - Crear base de datos y llenar con scripts en "/design"
+  - Inicializar BD
+  
+        flask db init
+  
+  - Actualizar con migracion actual
+  
+        flask db ugpgrade
+  
+  - Llenar BD con scripts en "/design"
+  
   - Setear variables de entorno
     + SNITCH_DB_HOST: Host de DB
     + SNITCH_DB_PORT: Puerto de DB
@@ -32,9 +41,11 @@ Esta siendo alojado en https://projectsnitch.ddns.net
     + SNITCH_SECRET_KEY: Secret Key para Flask.
     + SNITCH_RECAPTCHA_PUBLIC_KEY: Clave publica de Recaptcha
     + SNITCH_RECAPTCHA_PRIVATE_KEY: Clave privada de Recaptcha
-  - Ejecutar debug.py 
+    + FLASK_ENV: Opcion de entorno para flask ("production" o "development")
+    + FLASK_APP: (OPCIONAL) Nombre de las script de punto entrada, solo necesaria para el entorno donde se realizan cambios a BD.
+  - Ejecutar wsgi.py 
   
-        python debug.py
+        python wsgi.py
 
 ## Estructura JSONs
 
