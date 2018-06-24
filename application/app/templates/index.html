@@ -1,36 +1,52 @@
 {%extends 'layouts/base.html' %}
 {% from 'components/_formhelpers.html' import render_field %}
+{% from 'components/my_macros.html' import render_mensaje %}
 
 {% block page_content %}
-<div class="jumbotron py-lg-5 py-sm-3">
-    <h2 class="text-center">Project Snitch</h2>
-    <div class="form-group mt-sm-4">
-        <form action="{{ url_for('buscar') }}" method="get" role="form" id="form" onsubmit="return false;">
-                <input type="text" class="form-control" name="buscar" id="buscar"
-                       placeholder="Buscar Senador o Diputado">
-        </form>
+    <div class="jumbotron py-lg-5 py-sm-3">
+        <h2 class="text-center">Project Snitch</h2>
+        <div class="form-group mt-sm-4">
+            <form action="{{ url_for('buscar') }}" method="get" role="form" id="form" onsubmit="return false;">
+                    <input type="text" class="form-control" name="buscar" id="buscar"
+                           placeholder="Buscar Senador o Diputado">
+            </form>
+        </div>
+
+        {% if mensajes %}
+            <div class="rounded bg-success border-primary p-3 mt-5">
+                <h3>Avisos:</h3>
+                {% for mensaje in mensajes %}
+                    {% if mensaje.activo %}
+                        {{ render_mensaje(mensaje) }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 
-    {% if form %}
-    <div id="form-mensaje" class="container-fluid mt-5 p-0">
-        <form action="" method="POST" role="form">
-            <legend>Publicar Mensaje:</legend>
+        {% if form %}
+            <div class="jumbotron">
+                <div id="form-mensaje" class="container-fluid">
+                    <form action="" method="POST" role="form">
+                        <legend>Publicar Mensaje:</legend>
 
-            {{ form.hidden_tag() }}
+                        {{ form.hidden_tag() }}
 
-            <div class="form-group">
-                {{ render_field(form.titulo, class="form-control")}}
+                        <div class="form-group">
+                            {{ render_field(form.titulo, class="form-control")}}
+                        </div>
+
+                        <div class="form-group">
+                            {{ render_field(form.contenido, class="form-control")}}
+                        </div>
+
+                        <button type="submit" class="btn btn-danger">PUBLICAR</button>
+                        <button type="reset" class="btn btn-primary">Cancelar</button>
+                    </form>
+                </div>
             </div>
+        {% endif %}
 
-            <div class="form-group">
-                {{ render_field(form.contenido, class="form-control")}}
-            </div>
-
-            <button type="submit" class="btn btn-success">Ok</button>
-        </form>
-    </div>
-    {% endif %}
-</div>
 {% endblock %}
 
 {% block page_script %}

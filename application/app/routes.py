@@ -65,8 +65,9 @@ def load_user(id):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    mensajes = Mensaje.query.all()
     if current_user.is_authenticated:
-        if current_user.is_admin:
+        if current_user.is_admin():
             form = AdminMessageForm()
             if form.validate_on_submit():
                 new_mensaje = Mensaje(current_user.id,
@@ -78,9 +79,9 @@ def home():
                 flash('Mensaje publicado!', 'success')
                 return redirect(url_for('home'))
 
-            return render_template('index.html', form=form)
+            return render_template('index.html', mensajes=mensajes, form=form)
 
-    return render_template('index.html')
+    return render_template('index.html', mensajes=mensajes)
 
 
 @app.route('/legislador/<int:id_legislador>', methods=['GET', 'POST'])
