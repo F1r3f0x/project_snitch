@@ -23,3 +23,5 @@ from app.models.Periodo import Periodo
 from app.models.Region import Region
 from app.models.TipoLegislador import TipoLegislador
 
+# Sistema
+from app.models.sistema import Mensaje
