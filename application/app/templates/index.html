@@ -1,4 +1,5 @@
 {%extends 'layouts/base.html' %}
+{% from 'components/_formhelpers.html' import render_field %}
 
 {% block page_content %}
 <div class="jumbotron py-lg-5 py-sm-3">
@@ -10,14 +11,25 @@
         </form>
     </div>
 
-    <div id="changelog" class="container-fluid mt-5 p-0">
-        <h1>Changelog:</h1>
-        <ul class="list-group">
-            {% for parrafo in changelog %}
-                <li class="list-group-item">{{ parrafo }}</li>
-            {% endfor %}
-        </ul>
+    {% if form %}
+    <div id="form-mensaje" class="container-fluid mt-5 p-0">
+        <form action="" method="POST" role="form">
+            <legend>Publicar Mensaje:</legend>
+
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ render_field(form.titulo, class="form-control")}}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.contenido, class="form-control")}}
+            </div>
+
+            <button type="submit" class="btn btn-success">Ok</button>
+        </form>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 

@@ -24,4 +24,4 @@ from app.models.Region import Region
 from app.models.TipoLegislador import TipoLegislador
 
 # Sistema
-from app.models.sistema import Mensaje
+from app.models.sistema.Mensaje import Mensaje

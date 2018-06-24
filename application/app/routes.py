@@ -20,10 +20,12 @@ from werkzeug.routing import BuildError
 
 from app.forms import UserRegisterForm, UserLoginForm, UserSubscribeForm
 from app.forms import UserUnsubscribeForm, UserChangeProfile
+from app.forms import AdminMessageForm
 
 from app.models import Legislador
 from app.models import Usuario
 from app.models import Noticia
+from app.models import Mensaje
 
 from app import app, db, login  #, whooshee
 from app import my_utils
@@ -61,10 +63,24 @@ def load_user(id):
 ###############################################################################
 # Rutas
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    changelog = tools.get_changelog(app.config['CHANGELOG_DIR'])
-    return render_template('index.html', changelog=changelog)
+    if current_user.is_authenticated:
+        if current_user.is_admin:
+            form = AdminMessageForm()
+            if form.validate_on_submit():
+                new_mensaje = Mensaje(current_user.id,
+                                      form.titulo.data,
+                                      form.contenido.data)
+                db.session.add(new_mensaje)
+                db.session.commit()
+
+                flash('Mensaje publicado!', 'success')
+                return redirect(url_for('home'))
+
+            return render_template('index.html', form=form)
+
+    return render_template('index.html')
 
 
 @app.route('/legislador/<int:id_legislador>', methods=['GET', 'POST'])

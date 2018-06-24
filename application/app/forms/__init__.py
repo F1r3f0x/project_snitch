@@ -3,3 +3,4 @@ from app.forms.UserRegisterForm import UserRegisterForm
 from app.forms.UserSubscribeForm import UserSubscribeForm
 from app.forms.UserUnsubscribeForm import UserUnsubscribeForm
 from app.forms.UserChangeProfile import UserChangeProfile
+from app.forms.AdminMessageForm import AdminMessageForm
