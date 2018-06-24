@@ -101,6 +101,7 @@ class NoticiaAdvminView(BaseAdminView):
     column_sortable_list = ('titulo', ('fuente','fuente.id'), 'fecha')
 
 
+admin.add_view(BaseAdminView(models.Mensaje, db.session))
 admin.add_view(CargoLegislativoAdminView(models.CargoLegislativo, db.session))
 admin.add_view(StdCargosAdminView(models.Circunscripcion, db.session))
 admin.add_view(StdCargosAdminView(models.Distrito, db.session))
