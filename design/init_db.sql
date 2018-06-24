@@ -1004,7 +1004,5 @@ INSERT INTO distrito_cargo_legislativo VALUES (88,164);
 INSERT INTO distrito_cargo_legislativo VALUES (88,176);
 
 INSERT INTO usuario VALUES (1,1,"admin","password is admin1234","pbkdf2:sha256:50000$d7UdRQg2$fc55347bed76803ebb3dfa6b23ae7162cd9637c92bec55ce9449272757c9230e","2018-02-05 00:00:00","2018-02-05 00:00:00",1);
-INSERT INTO usuario VALUES (" "," "," "," "," "," "," "," ");
-INSERT INTO usuario VALUES (" "," "," "," "," "," "," "," ");
-INSERT INTO usuario VALUES (" "," "," "," "," "," "," "," ");
+
 
